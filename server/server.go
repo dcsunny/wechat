@@ -11,9 +11,9 @@ import (
 	"ubntgo/logger"
 
 	"github.com/go-resty/resty"
-	"github.com/silenceper/wechat/context"
-	"github.com/silenceper/wechat/message"
-	"github.com/silenceper/wechat/util"
+	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/message"
+	"github.com/dcsunny/wechat/util"
 )
 
 //Server struct
