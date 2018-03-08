@@ -243,6 +243,10 @@ func (srv *Server) Send() (err error) {
 	}
 	return
 }
+func (srv *Server) SetMessageForward(url string, token string) {
+	srv.mssageForwardUrl = url
+	srv.messageForwardToken = token
+}
 
 func (srv *Server) MessageForward() (respBody []byte) {
 	signature := util.Signature(srv.messageForwardToken, fmt.Sprint(srv.timestamp), srv.nonce)
