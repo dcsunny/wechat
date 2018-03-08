@@ -8,7 +8,9 @@ import (
 	"reflect"
 	"runtime/debug"
 	"strconv"
+	"ubntgo/logger"
 
+	"github.com/go-resty/resty"
 	"github.com/silenceper/wechat/context"
 	"github.com/silenceper/wechat/message"
 	"github.com/silenceper/wechat/util"
@@ -31,6 +33,9 @@ type Server struct {
 	random     []byte
 	nonce      string
 	timestamp  int64
+
+	mssageForwardUrl    string
+	messageForwardToken string
 }
 
 //NewServer init
@@ -227,6 +232,25 @@ func (srv *Server) Send() (err error) {
 	}
 	if replyMsg != nil {
 		srv.XML(replyMsg)
+	} else {
+		if srv.requestMsg.Event == message.EventView {
+			return
+		}
+		if srv.mssageForwardUrl != "" {
+			res := srv.MessageForward()
+			srv.Render(res)
+		}
 	}
 	return
+}
+
+func (srv *Server) MessageForward() (respBody []byte) {
+	signature := util.Signature(srv.messageForwardToken, fmt.Sprint(srv.timestamp), srv.nonce)
+	postUrl := srv.mssageForwardUrl + fmt.Sprintf("&timestamp=%d&nonce=%s&signature=%s", srv.timestamp, srv.nonce, signature)
+	resp, err := resty.R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
+	if err != nil {
+		logger.Error(err)
+		return nil
+	}
+	return resp.Body()
 }
