@@ -10,10 +10,10 @@ import (
 	"strconv"
 	"ubntgo/logger"
 
-	"github.com/go-resty/resty"
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/message"
 	"github.com/dcsunny/wechat/util"
+	"github.com/go-resty/resty"
 )
 
 //Server struct
@@ -238,7 +238,9 @@ func (srv *Server) Send() (err error) {
 		}
 		if srv.mssageForwardUrl != "" {
 			res := srv.MessageForward()
-			srv.Render(res)
+			if res != nil {
+				srv.Render(res)
+			}
 		}
 	}
 	return

@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-var xmlContentType = []string{"application/xml; charset=utf-8"}
+var xmlContentType = []string{"text/xml; charset=utf-8"}
 var plainContentType = []string{"text/plain; charset=utf-8"}
 
 //Render render from bytes
