@@ -8,7 +8,6 @@ import (
 	"reflect"
 	"runtime/debug"
 	"strconv"
-	"ubntgo/logger"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/message"
@@ -255,7 +254,6 @@ func (srv *Server) MessageForward() (respBody []byte) {
 	postUrl := srv.mssageForwardUrl + fmt.Sprintf("&timestamp=%d&nonce=%s&signature=%s", srv.timestamp, srv.nonce, signature)
 	resp, err := resty.R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
 	if err != nil {
-		logger.Error(err)
 		return nil
 	}
 	return resp.Body()
