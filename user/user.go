@@ -28,20 +28,20 @@ func NewUser(context *context.Context) *User {
 type Info struct {
 	util.CommonError
 
-	Subscribe     int32    `json:"subscribe"`
-	OpenID        string   `json:"openid"`
-	Nickname      string   `json:"nickname"`
-	Sex           int32    `json:"sex"`
-	City          string   `json:"city"`
-	Country       string   `json:"country"`
-	Province      string   `json:"province"`
-	Language      string   `json:"language"`
-	Headimgurl    string   `json:"headimgurl"`
-	SubscribeTime int32    `json:"subscribe_time"`
-	UnionID       string   `json:"unionid"`
-	Remark        string   `json:"remark"`
-	GroupID       int32    `json:"groupid"`
-	TagidList     []string `json:"tagid_list"`
+	Subscribe     int32  `json:"subscribe"`
+	OpenID        string `json:"openid"`
+	Nickname      string `json:"nickname"`
+	Sex           int32  `json:"sex"`
+	City          string `json:"city"`
+	Country       string `json:"country"`
+	Province      string `json:"province"`
+	Language      string `json:"language"`
+	Headimgurl    string `json:"headimgurl"`
+	SubscribeTime int32  `json:"subscribe_time"`
+	UnionID       string `json:"unionid"`
+	Remark        string `json:"remark"`
+	GroupID       int32  `json:"groupid"`
+	TagidList     []int  `json:"tagid_list"`
 }
 
 //GetUserInfo 获取用户基本信息
@@ -61,6 +61,7 @@ func (user *User) GetUserInfo(openID string) (userInfo *Info, err error) {
 	userInfo = new(Info)
 	err = json.Unmarshal(response, userInfo)
 	if err != nil {
+		fmt.Println(fmt.Sprintf("get user info:%s", string(response)))
 		return
 	}
 	if userInfo.ErrCode != 0 {
