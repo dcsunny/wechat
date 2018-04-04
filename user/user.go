@@ -45,7 +45,7 @@ type Info struct {
 }
 
 //GetUserInfo 获取用户基本信息
-func (user *User) GetUserInfo(openID string) (userInfo *Info, err error) {
+func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 	var accessToken string
 	accessToken, err = user.GetAccessToken()
 	if err != nil {
@@ -58,8 +58,8 @@ func (user *User) GetUserInfo(openID string) (userInfo *Info, err error) {
 	if err != nil {
 		return
 	}
-	userInfo = new(Info)
-	err = json.Unmarshal(response, userInfo)
+	userInfo = Info{}
+	err = json.Unmarshal(response, &userInfo)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("get user info:%s", string(response)))
 		return
