@@ -32,7 +32,7 @@ func (ctx *Context) GetAccessToken() (accessToken string, err error) {
 	ctx.accessTokenLock.Lock()
 	defer ctx.accessTokenLock.Unlock()
 
-	accessTokenCacheKey := fmt.Sprintf("access_token_%s", ctx.AppID)
+	accessTokenCacheKey := fmt.Sprintf("access_token:%s", ctx.AppID)
 	val := ctx.Cache.Get(accessTokenCacheKey)
 	if val != nil {
 		accessToken = val.(string)
@@ -67,7 +67,7 @@ func (ctx *Context) GetAccessTokenFromServer() (resAccessToken ResAccessToken, e
 		return
 	}
 
-	accessTokenCacheKey := fmt.Sprintf("access_token_%s", ctx.AppID)
+	accessTokenCacheKey := fmt.Sprintf("access_token:%s", ctx.AppID)
 	expires := resAccessToken.ExpiresIn - 1500
 	err = ctx.Cache.Set(accessTokenCacheKey, resAccessToken.AccessToken, time.Duration(expires)*time.Second)
 	return
