@@ -33,11 +33,7 @@ func (ctx *Context) GetAccessToken() (accessToken string, err error) {
 	defer ctx.accessTokenLock.Unlock()
 
 	accessTokenCacheKey := fmt.Sprintf("access_token:%s", ctx.AppID)
-	val := ctx.Cache.Get(accessTokenCacheKey)
-	if val != nil {
-		accessToken = val.(string)
-		return
-	}
+	accessToken = ctx.Cache.GetString(accessTokenCacheKey)
 
 	//从微信服务器获取
 	var resAccessToken ResAccessToken
@@ -69,6 +65,6 @@ func (ctx *Context) GetAccessTokenFromServer() (resAccessToken ResAccessToken, e
 
 	accessTokenCacheKey := fmt.Sprintf("access_token:%s", ctx.AppID)
 	expires := resAccessToken.ExpiresIn - 1500
-	err = ctx.Cache.Set(accessTokenCacheKey, resAccessToken.AccessToken, time.Duration(expires)*time.Second)
+	err = ctx.Cache.SetString(accessTokenCacheKey, resAccessToken.AccessToken, time.Duration(expires)*time.Second)
 	return
 }

@@ -63,6 +63,19 @@ func (r *Redis) Get(key string) interface{} {
 	return reply
 }
 
+func (r *Redis) GetString(key string) string {
+	conn := r.conn.Get()
+	defer conn.Close()
+
+	var data []byte
+	var err error
+	if data, err = redis.Bytes(conn.Do("GET", key)); err != nil {
+		return ""
+	}
+
+	return string(data)
+}
+
 //Set 设置一个值
 func (r *Redis) Set(key string, val interface{}, timeout time.Duration) (err error) {
 	conn := r.conn.Get()
@@ -74,6 +87,16 @@ func (r *Redis) Set(key string, val interface{}, timeout time.Duration) (err err
 	}
 
 	_, err = conn.Do("SETEX", key, int64(timeout/time.Second), data)
+
+	return
+}
+
+//Set 设置一个值
+func (r *Redis) SetString(key string, val string, timeout time.Duration) (err error) {
+	conn := r.conn.Get()
+	defer conn.Close()
+
+	_, err = conn.Do("SETEX", key, int64(timeout/time.Second), []byte(val))
 
 	return
 }

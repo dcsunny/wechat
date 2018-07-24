@@ -32,6 +32,15 @@ func (mem *Memcache) Get(key string) interface{} {
 	return result
 }
 
+func (mem *Memcache) GetString(key string) string {
+	var err error
+	var item *memcache.Item
+	if item, err = mem.conn.Get(key); err != nil {
+		return ""
+	}
+	return string(item.Value)
+}
+
 // IsExist check value exists in memcache.
 func (mem *Memcache) IsExist(key string) bool {
 	if _, err := mem.conn.Get(key); err != nil {
@@ -48,6 +57,12 @@ func (mem *Memcache) Set(key string, val interface{}, timeout time.Duration) (er
 	}
 
 	item := &memcache.Item{Key: key, Value: data, Expiration: int32(timeout / time.Second)}
+	return mem.conn.Set(item)
+}
+
+func (mem *Memcache) SetString(key string, val string, timeout time.Duration) (err error) {
+
+	item := &memcache.Item{Key: key, Value: []byte(val), Expiration: int32(timeout / time.Second)}
 	return mem.conn.Set(item)
 }
 
