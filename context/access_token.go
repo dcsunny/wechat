@@ -34,7 +34,9 @@ func (ctx *Context) GetAccessToken() (accessToken string, err error) {
 
 	accessTokenCacheKey := fmt.Sprintf("access_token:%s", ctx.AppID)
 	accessToken = ctx.Cache.GetString(accessTokenCacheKey)
-
+	if accessToken != "" {
+		return
+	}
 	//从微信服务器获取
 	var resAccessToken ResAccessToken
 	resAccessToken, err = ctx.GetAccessTokenFromServer()
