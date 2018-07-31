@@ -17,6 +17,8 @@ type Context struct {
 	PayNotifyURL   string
 	PayKey         string
 
+	AccessTokenURL string
+
 	Cache cache.Cache
 
 	Writer  http.ResponseWriter
