@@ -10,10 +10,10 @@ import (
 	"github.com/dcsunny/wechat/material"
 	"github.com/dcsunny/wechat/menu"
 	"github.com/dcsunny/wechat/oauth"
+	"github.com/dcsunny/wechat/pay"
 	"github.com/dcsunny/wechat/server"
 	"github.com/dcsunny/wechat/template"
 	"github.com/dcsunny/wechat/user"
-	"github.com/dcsunny/wechat/pay"
 )
 
 // Wechat struct
