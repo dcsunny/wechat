@@ -16,9 +16,9 @@ type Pay struct {
 	*context.Context
 }
 
-// Params was NEEDED when request unifiedorder
 // 传入的参数，用于生成 prepay_id 的必需参数
-type Params struct {
+// PayParams was NEEDED when request unifiedorder
+type PayParams struct {
 	TotalFee   string
 	CreateIP   string
 	Body       string
@@ -26,8 +26,8 @@ type Params struct {
 	OpenID     string
 }
 
-// Config 是传出用于 jsdk 用的参数
-type Config struct {
+// PayConfig 是传出用于 jsdk 用的参数
+type PayConfig struct {
 	Timestamp int64
 	NonceStr  string
 	PrePayID  string
@@ -65,13 +65,13 @@ type payRequest struct {
 	OutTradeNo     string `xml:"out_trade_no"`          //商户订单号
 	FeeType        string `xml:"fee_type,omitempty"`    //标价币种
 	TotalFee       string `xml:"total_fee"`             //标价金额
-	SpbillCreateIP string `xml:"spbill_create_ip"`      //终端IP
+	SpbillCreateIp string `xml:"spbill_create_ip"`      //终端IP
 	TimeStart      string `xml:"time_start,omitempty"`  //交易起始时间
 	TimeExpire     string `xml:"time_expire,omitempty"` //交易结束时间
 	GoodsTag       string `xml:"goods_tag,omitempty"`   //订单优惠标记
-	NotifyURL      string `xml:"notify_url"`            //通知地址
+	NotifyUrl      string `xml:"notify_url"`            //通知地址
 	TradeType      string `xml:"trade_type"`            //交易类型
-	ProductID      string `xml:"product_id,omitempty"`  //商品ID
+	ProductId      string `xml:"product_id,omitempty"`  //商品ID
 	LimitPay       string `xml:"limit_pay,omitempty"`   //
 	OpenID         string `xml:"openid,omitempty"`      //用户标识
 	SceneInfo      string `xml:"scene_info,omitempty"`  //场景信息
@@ -83,8 +83,8 @@ func NewPay(ctx *context.Context) *Pay {
 	return &pay
 }
 
-// PrePayID will request wechat merchant api and request for a pre payment order id
-func (pcf *Pay) PrePayID(p *Params) (prePayID string, err error) {
+// PrePayId will request wechat merchant api and request for a pre payment order id
+func (pcf *Pay) PrePayId(p *PayParams) (prePayID string, err error) {
 	nonceStr := util.RandomStr(32)
 	tradeType := "JSAPI"
 	template := "appid=%s&body=%s&mch_id=%s&nonce_str=%s&notify_url=%s&openid=%s&out_trade_no=%s&spbill_create_ip=%s&total_fee=%s&trade_type=%s&key=%s"
@@ -98,8 +98,8 @@ func (pcf *Pay) PrePayID(p *Params) (prePayID string, err error) {
 		Body:           p.Body,
 		OutTradeNo:     p.OutTradeNo,
 		TotalFee:       p.TotalFee,
-		SpbillCreateIP: p.CreateIP,
-		NotifyURL:      pcf.PayNotifyURL,
+		SpbillCreateIp: p.CreateIP,
+		NotifyUrl:      pcf.PayNotifyURL,
 		TradeType:      tradeType,
 		OpenID:         p.OpenID,
 	}
@@ -118,6 +118,7 @@ func (pcf *Pay) PrePayID(p *Params) (prePayID string, err error) {
 			return payRet.PrePayID, nil
 		}
 		return "", errors.New(payRet.ErrCode + payRet.ErrCodeDes)
+	} else {
+		return "", errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "] [params : " + str + "] [sign : " + sign + "]")
 	}
-	return "", errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "] [params : " + str + "] [sign : " + sign + "]")
 }

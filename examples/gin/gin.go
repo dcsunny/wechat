@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/gin-gonic/gin"
 	"github.com/dcsunny/wechat"
 	"github.com/dcsunny/wechat/message"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
