@@ -47,6 +47,12 @@ func (decryptor *Decryptor) base64Decode(encodedStr string) []byte {
 }
 
 func (decryptor *Decryptor) decrypt(encryptedData, iv string) []byte {
+	if encryptedData == "" {
+		return nil
+	}
+	if iv == "" {
+		return nil
+	}
 	decryptor.Err = nil
 	cipherBytes := decryptor.base64Decode(encryptedData)
 	ivBytes := decryptor.base64Decode(iv)
@@ -100,6 +106,9 @@ func (decryptor *Decryptor) Run(encryptedData, iv string) *mini_message.Run {
 }
 
 func pkcs7Unpad(padBytes []byte) []byte {
+	if len(padBytes) == 0 {
+		return padBytes
+	}
 	length := len(padBytes)
 	padLen := int(padBytes[length-1])
 	if padLen < 1 || padLen > 32 {

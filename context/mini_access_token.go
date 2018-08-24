@@ -30,15 +30,14 @@ func (ctx *Context) GetMiniAccessToken() (accessToken string, err error) {
 	defer ctx.accessTokenLock.Unlock()
 
 	accessTokenCacheKey := fmt.Sprintf("mini_access_token_%s", ctx.AppID)
-	val := ctx.Cache.Get(accessTokenCacheKey)
-	if val != nil {
-		accessToken = val.(string)
+	accessToken = ctx.Cache.GetString(accessTokenCacheKey)
+	if accessToken != "" {
 		return
 	}
 
 	//从微信服务器获取
 	var resQyAccessToken ResQyAccessToken
-	resQyAccessToken, err = ctx.GetQyAccessTokenFromServer()
+	resQyAccessToken, err = ctx.GetMiniAccessTokenFromServer()
 	if err != nil {
 		return
 	}
@@ -64,8 +63,8 @@ func (ctx *Context) GetMiniAccessTokenFromServer() (resQyAccessToken ResQyAccess
 		return
 	}
 
-	qyAccessTokenCacheKey := fmt.Sprintf("mini_access_token_%s", ctx.AppID)
+	AccessTokenCacheKey := fmt.Sprintf("mini_access_token_%s", ctx.AppID)
 	expires := resQyAccessToken.ExpiresIn - 1500
-	err = ctx.Cache.Set(qyAccessTokenCacheKey, resQyAccessToken.AccessToken, time.Duration(expires)*time.Second)
+	err = ctx.Cache.SetString(AccessTokenCacheKey, resQyAccessToken.AccessToken, time.Duration(expires)*time.Second)
 	return
 }
