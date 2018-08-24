@@ -18,7 +18,7 @@ type Decryptor struct {
 }
 
 //New creates a decryptor
-func New(appID, sessionKey string) (*Decryptor, error) {
+func NewDecryptor(appID, sessionKey string) (*Decryptor, error) {
 
 	aesKey, err := base64.StdEncoding.DecodeString(sessionKey)
 	if err != nil {
