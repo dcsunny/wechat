@@ -9,8 +9,8 @@ import (
 
 type MiniSession struct {
 	util.CommonError
-	OpenID     string `json:"open_id"`
-	UnionID    string `json:"union_id"`
+	OpenID     string `json:"openid"`
+	UnionID    string `json:"unionid"`
 	SessionKey string `json:"session_key"`
 }
 
