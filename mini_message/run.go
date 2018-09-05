@@ -5,6 +5,6 @@ type Run struct {
 }
 
 type RunRecord struct {
-	Timestamp uint `json:"timestamp"`
-	Steps     uint `json:"step"`
+	Timestamp int64 `json:"timestamp"`
+	Steps     uint  `json:"step"`
 }
