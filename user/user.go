@@ -10,6 +10,7 @@ import (
 
 const (
 	userInfoURL = "https://api.weixin.qq.com/cgi-bin/user/info"
+	userListURL = "https://api.weixin.qq.com/cgi-bin/user/get"
 )
 
 //User 用户管理
@@ -66,6 +67,43 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 	}
 	if userInfo.ErrCode != 0 {
 		err = fmt.Errorf("GetUserInfo Error , errcode=%d , errmsg=%s", userInfo.ErrCode, userInfo.ErrMsg)
+		return
+	}
+	return
+}
+
+type ListResult struct {
+	util.CommonError
+
+	Total int64 `json:"total"`
+	Count int64 `json:"count"`
+	Data  struct {
+		OpenID []string `json:"openid"`
+	} `json:"data"`
+	NextOpenID string `json:"next_openid"`
+}
+
+func (user *User) List(nexOpenID string) (users ListResult, err error) {
+	var accessToken string
+	accessToken, err = user.GetAccessToken()
+	if err != nil {
+		return
+	}
+	uri := fmt.Sprintf("%s?access_token=%s&next_openid=%s", userListURL, accessToken, nexOpenID)
+	var response []byte
+	response, err = util.HTTPGet(uri)
+	if err != nil {
+		return
+	}
+
+	users = ListResult{}
+	err = json.Unmarshal(response, &users)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("get user info:%s", string(response)))
+		return
+	}
+	if users.ErrCode != 0 {
+		err = fmt.Errorf("get user list Error , errcode=%d , errmsg=%s", users.ErrCode, users.ErrMsg)
 		return
 	}
 	return
