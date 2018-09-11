@@ -3,7 +3,7 @@ package mini_message
 type Profile struct {
 	OpenID    string    `json:"openid"`
 	UnionID   string    `json:"unionid"`
-	NickName  string    `json:"nick_name"`
+	NickName  string    `json:"nickname"`
 	Gender    int       `json:"gender"`
 	City      string    `json:"city"`
 	Province  string    `json:"province"`
