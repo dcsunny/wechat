@@ -1,7 +1,7 @@
 package mini_message
 
 type Run struct {
-	Data []RunRecord `json:"stepInfoList"`
+	Data []RunRecord `json:"data"`
 }
 
 type RunRecord struct {
