@@ -1,6 +1,6 @@
 package mini_message
 
 type Share struct {
-	OpenGId   string    `json:"open_gid"`
+	OpenGId   string    `json:"openGId"`
 	Watermark Watermark `json:"watermark"`
 }
