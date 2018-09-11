@@ -1,14 +1,14 @@
 package mini_message
 
 type Profile struct {
-	OpenID    string    `json:"openId"`
-	UnionID   string    `json:"unionId"`
-	NickName  string    `json:"nickName"`
+	OpenID    string    `json:"openid"`
+	UnionID   string    `json:"unionid"`
+	NickName  string    `json:"nick_name"`
 	Gender    int       `json:"gender"`
 	City      string    `json:"city"`
 	Province  string    `json:"province"`
 	Country   string    `json:"country"`
-	AvatarURL string    `json:"avatarUrl"`
+	AvatarURL string    `json:"avatar_url"`
 	Language  string    `json:"language"`
 	Watermark Watermark `json:"watermark"`
 }
