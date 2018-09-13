@@ -11,7 +11,7 @@ import (
 const (
 	templateSendURL          = "https://api.weixin.qq.com/cgi-bin/message/template/send"
 	templateSubscribeSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
-	templateMiniSendURL      = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?"
+	templateMiniSendURL      = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
 )
 
 //Template 模板消息
