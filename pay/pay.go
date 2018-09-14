@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 
+	"time"
+
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/util"
 )
@@ -28,11 +30,12 @@ type PayParams struct {
 
 // PayConfig 是传出用于 jsdk 用的参数
 type PayConfig struct {
-	Timestamp int64
-	NonceStr  string
-	PrePayID  string
-	SignType  string
-	Sign      string
+	AppID     string `json:"appId"`
+	TimeStamp string `json:"timeStamp"`
+	NonceStr  string `json:"nonceStr"`
+	Package   string `json:"package"`
+	SignType  string `json:"signType"`
+	Sign      string `json:"sign"`
 }
 
 // payResult 是 unifie order 接口的返回
@@ -77,6 +80,35 @@ type payRequest struct {
 	SceneInfo      string `xml:"scene_info,omitempty"`  //场景信息
 }
 
+type NotifyResult struct {
+	ReturnCode         string `xml:"return_code"`
+	ReturnMsg          string `xml:"return_msg"`
+	Appid              string `xml:"appid"`
+	MchID              string `xml:"mch_id"`
+	DeviceInfo         string `xml:"device_info"`
+	NonceStr           string `xml:"nonce_str"`
+	Sign               string `xml:"sign"`
+	SignType           string `xml:"sign_type"`
+	ResultCode         string `xml:"result_code"`
+	ErrCode            string `xml:"err_code"`
+	ErrCodeDes         string `xml:"err_code_des"`
+	Openid             string `xml:"openid"`
+	IsSubscribe        string `xml:"is_subscribe"`
+	TradeType          string `xml:"trade_type"`
+	BankType           string `xml:"bank_type"`
+	TotalFee           string `xml:"total_fee"`
+	SettlementTotalFee string `xml:"settlement_total_fee"`
+	FeeType            string `xml:"fee_type"`
+	CashFee            string `xml:"cash_fee"`
+	CashFeeType        string `xml:"cash_fee_type"`
+	CouponFee          string `xml:"coupon_fee"`
+	CouponCount        string `xml:"coupon_count"`
+	TransactionId      string `xml:"transaction_id"`
+	OutTradeNo         string `xml:"out_trade_no"`
+	Attach             string `xml:"attach"`
+	TimeEnd            string `xml:"time_end"`
+}
+
 // NewPay return an instance of Pay package
 func NewPay(ctx *context.Context) *Pay {
 	pay := Pay{Context: ctx}
@@ -87,8 +119,12 @@ func NewPay(ctx *context.Context) *Pay {
 func (pcf *Pay) PrePayId(p *PayParams) (prePayID string, err error) {
 	nonceStr := util.RandomStr(32)
 	tradeType := "JSAPI"
-	template := "appid=%s&body=%s&mch_id=%s&nonce_str=%s&notify_url=%s&openid=%s&out_trade_no=%s&spbill_create_ip=%s&total_fee=%s&trade_type=%s&key=%s"
-	str := fmt.Sprintf(template, pcf.AppID, p.Body, pcf.PayMchID, nonceStr, pcf.PayNotifyURL, p.OpenID, p.OutTradeNo, p.CreateIP, p.TotalFee, tradeType, pcf.PayKey)
+	template := "appid=%s&body=%s&mch_id=%s&nonce_str=%s"
+	if pcf.PayNotifyURL != "" {
+		template = template + fmt.Sprintf("&notify_url=%s", pcf.PayNotifyURL)
+	}
+	template = template + "&openid=%s&out_trade_no=%s&spbill_create_ip=%s&total_fee=%s&trade_type=%s&key=%s"
+	str := fmt.Sprintf(template, pcf.AppID, p.Body, pcf.PayMchID, nonceStr, p.OpenID, p.OutTradeNo, p.CreateIP, p.TotalFee, tradeType, pcf.PayKey)
 	sign := util.MD5Sum(str)
 	request := payRequest{
 		AppID:          pcf.AppID,
@@ -121,4 +157,17 @@ func (pcf *Pay) PrePayId(p *PayParams) (prePayID string, err error) {
 	} else {
 		return "", errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "] [params : " + str + "] [sign : " + sign + "]")
 	}
+}
+
+func (pcf *Pay) JSPayParams(prePayID string) PayConfig {
+	payConf := PayConfig{
+		AppID:     pcf.AppID,
+		TimeStamp: fmt.Sprintf("%d", time.Now().Unix()),
+		NonceStr:  util.RandomStr(32),
+		Package:   fmt.Sprintf("prepay_id=%s", prePayID),
+		SignType:  "MD5",
+	}
+	str := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&signType=%s&timeStamp=%s&key=%s", payConf.AppID, payConf.NonceStr, payConf.Package, payConf.SignType, payConf.TimeStamp, pcf.PayKey)
+	payConf.Sign = util.MD5Sum(str)
+	return payConf
 }
