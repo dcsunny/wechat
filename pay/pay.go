@@ -173,6 +173,6 @@ func (pcf *Pay) JSPayParams(prePayID string) PayConfig {
 		SignType:  "MD5",
 	}
 	str := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&signType=%s&timeStamp=%s&key=%s", payConf.AppID, payConf.NonceStr, payConf.Package, payConf.SignType, payConf.TimeStamp, pcf.PayKey)
-	payConf.Sign = util.MD5Sum(str)
+	payConf.PaySign = util.MD5Sum(str)
 	return payConf
 }
