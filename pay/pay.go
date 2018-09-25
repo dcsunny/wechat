@@ -35,7 +35,7 @@ type PayConfig struct {
 	NonceStr  string `json:"nonceStr"`
 	Package   string `json:"package"`
 	SignType  string `json:"signType"`
-	Sign      string `json:"sign"`
+	PaySign   string `json:"paySign"`
 }
 
 // payResult 是 unifie order 接口的返回
@@ -107,6 +107,11 @@ type NotifyResult struct {
 	OutTradeNo         string `xml:"out_trade_no"`
 	Attach             string `xml:"attach"`
 	TimeEnd            string `xml:"time_end"`
+}
+
+type NotifyReturn struct {
+	ReturnCode string `xml:"return_code"`
+	ReturnMsg  string `xml:"return_msg"`
 }
 
 // NewPay return an instance of Pay package
