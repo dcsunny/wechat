@@ -9,8 +9,9 @@ import (
 )
 
 const (
-	userInfoURL = "https://api.weixin.qq.com/cgi-bin/user/info"
-	userListURL = "https://api.weixin.qq.com/cgi-bin/user/get"
+	userInfoURL     = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN"
+	updateRemarkURL = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=%s"
+	userListURL     = "https://api.weixin.qq.com/cgi-bin/user/get"
 )
 
 //User 用户管理
@@ -29,20 +30,20 @@ func NewUser(context *context.Context) *User {
 type Info struct {
 	util.CommonError
 
-	Subscribe     int32  `json:"subscribe"`
-	OpenID        string `json:"openid"`
-	Nickname      string `json:"nickname"`
-	Sex           int32  `json:"sex"`
-	City          string `json:"city"`
-	Country       string `json:"country"`
-	Province      string `json:"province"`
-	Language      string `json:"language"`
-	Headimgurl    string `json:"headimgurl"`
-	SubscribeTime int32  `json:"subscribe_time"`
-	UnionID       string `json:"unionid"`
-	Remark        string `json:"remark"`
-	GroupID       int32  `json:"groupid"`
-	TagidList     []int  `json:"tagid_list"`
+	Subscribe     int32   `json:"subscribe"`
+	OpenID        string  `json:"openid"`
+	Nickname      string  `json:"nickname"`
+	Sex           int32   `json:"sex"`
+	City          string  `json:"city"`
+	Country       string  `json:"country"`
+	Province      string  `json:"province"`
+	Language      string  `json:"language"`
+	Headimgurl    string  `json:"headimgurl"`
+	SubscribeTime int32   `json:"subscribe_time"`
+	UnionID       string  `json:"unionid"`
+	Remark        string  `json:"remark"`
+	GroupID       int32   `json:"groupid"`
+	TagidList     []int32 `json:"tagid_list"`
 }
 
 //GetUserInfo 获取用户基本信息
@@ -53,7 +54,7 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s&openid=%s&lang=zh_CN", userInfoURL, accessToken, openID)
+	uri := fmt.Sprintf(userInfoURL, accessToken, openID)
 	var response []byte
 	response, err = util.HTTPGet(uri)
 	if err != nil {
@@ -107,4 +108,19 @@ func (user *User) List(nexOpenID string) (users ListResult, err error) {
 		return
 	}
 	return
+}
+
+func (user *User) UpdateRemark(openID, remark string) (err error) {
+	var accessToken string
+	accessToken, err = user.GetAccessToken()
+	if err != nil {
+		return
+	}
+	uri := fmt.Sprintf(updateRemarkURL, accessToken)
+	var response []byte
+	response, err = util.PostJSON(uri, map[string]string{"openid": openID, "remark": remark})
+	if err != nil {
+		return
+	}
+	return util.DecodeWithCommonError(response, "UpdateRemark")
 }
