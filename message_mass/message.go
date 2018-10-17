@@ -28,6 +28,7 @@ type MessageByOpen struct {
 	Text    struct {
 		Content string `json:"content"`
 	} `json:"text"`
+	Clientmsgid string `json:"clientmsgid"`
 }
 
 type MessageSassResult struct {
@@ -37,10 +38,11 @@ type MessageSassResult struct {
 	MsgDataId int64  `json:"msg_data_id"`
 }
 
-func NewTextMessage(openids []string, content string) MessageByOpen {
+func NewTextMessage(openids []string, content string, tag string) MessageByOpen {
 	message := MessageByOpen{
-		Touser:  openids,
-		Msgtype: "text",
+		Touser:      openids,
+		Msgtype:     "text",
+		Clientmsgid: tag,
 	}
 	message.Text.Content = content
 	return message
