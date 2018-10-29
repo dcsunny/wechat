@@ -11,6 +11,8 @@ import (
 
 	"time"
 
+	"strings"
+
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/message"
 	"github.com/dcsunny/wechat/util"
@@ -212,13 +214,34 @@ func (srv *Server) buildResponse(reply *message.Reply) (err error) {
 
 //Send 将自定义的消息发送
 func (srv *Server) Send() (err error) {
-	replyMsg := srv.responseMsg
+	replyMsg, err := srv.sendBuildMsg(srv.responseMsg)
+	if err != nil {
+		return
+	}
+	if replyMsg != nil {
+		srv.XML(replyMsg)
+	} else {
+		if srv.requestMsg.Event == message.EventView {
+			return
+		}
+		if srv.mssageForwardUrl != "" {
+			srv.MessageForward()
+		}
+	}
+	return
+}
+func (srv *Server) SetMessageForward(url string, token string) {
+	srv.mssageForwardUrl = url
+	srv.messageForwardToken = token
+}
+func (srv *Server) sendBuildMsg(replyMsg interface{}) (interface{}, error) {
 	if srv.isSafeMode {
 		//安全模式下对消息进行加密
 		var encryptedMsg []byte
+		var err error
 		encryptedMsg, err = util.EncryptMsg(srv.random, srv.responseRawXMLMsg, srv.AppID, srv.EncodingAESKey)
 		if err != nil {
-			return
+			return nil, err
 		}
 		//TODO 如果获取不到timestamp nonce 则自己生成
 		timestamp := srv.timestamp
@@ -231,33 +254,37 @@ func (srv *Server) Send() (err error) {
 			Nonce:        srv.nonce,
 		}
 	}
-	if replyMsg != nil {
-		srv.XML(replyMsg)
-	} else {
-		if srv.requestMsg.Event == message.EventView {
-			return
-		}
-		if srv.mssageForwardUrl != "" {
-			res := srv.MessageForward()
-			if res != nil {
-				srv.Render(res)
-			}
-		}
-	}
-	return
+	return replyMsg, nil
 }
-func (srv *Server) SetMessageForward(url string, token string) {
-	srv.mssageForwardUrl = url
-	srv.messageForwardToken = token
-}
-
-func (srv *Server) MessageForward() (respBody []byte) {
+func (srv *Server) MessageForward() {
 	signature := util.Signature(srv.messageForwardToken, fmt.Sprint(srv.timestamp), srv.nonce)
 	postUrl := srv.mssageForwardUrl + fmt.Sprintf("&timestamp=%d&nonce=%s&signature=%s", srv.timestamp, srv.nonce, signature)
-	resp, err := resty.SetTimeout(5*time.Second).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
+	resp, err := resty.SetTimeout(450*time.Microsecond).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
 	if err != nil {
-		fmt.Println("http error,err:", err.Error())
-		return nil
+		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
+			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("test")}
+			err = srv.buildResponse(msg)
+			if err != nil {
+				fmt.Println("build response error:", err.Error())
+				return
+			}
+			replyMsg, err := srv.sendBuildMsg(srv.responseMsg)
+			if err != nil {
+				fmt.Println("send build msg error:", err.Error())
+				return
+			}
+			if replyMsg != nil {
+				srv.XML(replyMsg)
+			}
+			return
+		}
+		fmt.Println("http error:", err.Error())
+		return
 	}
-	return resp.Body()
+	replyMsg, err := srv.sendBuildMsg(resp.Body())
+	if err != nil {
+		return
+	}
+	srv.XML(replyMsg)
+	return
 }
