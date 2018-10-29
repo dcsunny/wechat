@@ -259,10 +259,11 @@ func (srv *Server) sendBuildMsg(replyMsg interface{}) (interface{}, error) {
 func (srv *Server) MessageForward() {
 	signature := util.Signature(srv.messageForwardToken, fmt.Sprint(srv.timestamp), srv.nonce)
 	postUrl := srv.mssageForwardUrl + fmt.Sprintf("&timestamp=%d&nonce=%s&signature=%s", srv.timestamp, srv.nonce, signature)
-	resp, err := resty.SetTimeout(450*time.Microsecond).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
+	resp, err := resty.SetTimeout(4*time.Second).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
 	if err != nil {
+		fmt.Println("http error:", err.Error())
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
-			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("test")}
+			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("系统异常,请稍后再试")}
 			err = srv.buildResponse(msg)
 			if err != nil {
 				fmt.Println("build response error:", err.Error())
@@ -278,7 +279,6 @@ func (srv *Server) MessageForward() {
 			}
 			return
 		}
-		fmt.Println("http error:", err.Error())
 		return
 	}
 	replyMsg, err := srv.sendBuildMsg(resp.Body())
