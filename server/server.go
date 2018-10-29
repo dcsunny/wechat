@@ -259,7 +259,7 @@ func (srv *Server) sendBuildMsg(replyMsg interface{}) (interface{}, error) {
 func (srv *Server) MessageForward() {
 	signature := util.Signature(srv.messageForwardToken, fmt.Sprint(srv.timestamp), srv.nonce)
 	postUrl := srv.mssageForwardUrl + fmt.Sprintf("&timestamp=%d&nonce=%s&signature=%s", srv.timestamp, srv.nonce, signature)
-	resp, err := resty.SetTimeout(450*time.Microsecond).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
+	resp, err := resty.SetTimeout(4500*time.Microsecond).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
 	if err != nil {
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
 			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("系统异常,请稍后再试")}
