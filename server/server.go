@@ -9,6 +9,8 @@ import (
 	"runtime/debug"
 	"strconv"
 
+	"time"
+
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/message"
 	"github.com/dcsunny/wechat/util"
@@ -252,7 +254,7 @@ func (srv *Server) SetMessageForward(url string, token string) {
 func (srv *Server) MessageForward() (respBody []byte) {
 	signature := util.Signature(srv.messageForwardToken, fmt.Sprint(srv.timestamp), srv.nonce)
 	postUrl := srv.mssageForwardUrl + fmt.Sprintf("&timestamp=%d&nonce=%s&signature=%s", srv.timestamp, srv.nonce, signature)
-	resp, err := resty.R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
+	resp, err := resty.SetTimeout(5*time.Second).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
 	if err != nil {
 		return nil
 	}
