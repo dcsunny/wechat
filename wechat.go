@@ -101,3 +101,13 @@ func (wc *Wechat) GetTemplate() *template.Template {
 func (wc *Wechat) GetPay() *pay.Pay {
 	return pay.NewPay(wc.Context)
 }
+
+// 带参数二维码接口
+func (wc *Wechat) GetQrCode() *user.QrCode {
+	return user.NewQrCode(wc.Context)
+}
+
+//小程序二维码
+func (wc *Wechat) GetMiniQrCode() *user.MiniQrCode {
+	return user.NewMiniQrCode(wc.Context)
+}
