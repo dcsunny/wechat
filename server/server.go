@@ -264,7 +264,7 @@ func (srv *Server) MessageForward() {
 
 func (srv *Server) MessageForwardSend(postUrl string, retryNum *int) {
 
-	timeout := 4500 * time.Microsecond
+	timeout := 4500 * time.Millisecond
 	resp, err := util.PostXML(postUrl, srv.requestMsg, &timeout)
 	if err != nil {
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
