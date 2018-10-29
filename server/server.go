@@ -262,7 +262,7 @@ func (srv *Server) MessageForward() {
 	resp, err := resty.SetTimeout(450*time.Microsecond).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
 	if err != nil {
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
-			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("test")}
+			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("系统异常,请稍后再试")}
 			err = srv.buildResponse(msg)
 			if err != nil {
 				fmt.Println("error:", err.Error())
