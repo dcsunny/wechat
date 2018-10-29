@@ -259,6 +259,11 @@ func (srv *Server) sendBuildMsg(replyMsg interface{}) (interface{}, error) {
 func (srv *Server) MessageForward() {
 	signature := util.Signature(srv.messageForwardToken, fmt.Sprint(srv.timestamp), srv.nonce)
 	postUrl := srv.mssageForwardUrl + fmt.Sprintf("&timestamp=%d&nonce=%s&signature=%s", srv.timestamp, srv.nonce, signature)
+	retryNum := 0
+	srv.MessageForwardSend(postUrl, &retryNum)
+}
+
+func (srv *Server) MessageForwardSend(postUrl string, retryNum *int) {
 	resp, err := resty.SetTimeout(4500*time.Microsecond).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
 	if err != nil {
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
@@ -269,7 +274,18 @@ func (srv *Server) MessageForward() {
 				return
 			}
 			srv.XML(srv.responseMsg)
-
+			return
+		} else if strings.Contains(err.Error(), "request canceled while waiting for connection (Client.Timeout exceeded while awaiting headers)") {
+			_retryNum := 0
+			if retryNum != nil {
+				_retryNum = *retryNum
+			}
+			if _retryNum > 1 {
+				return
+			}
+			_retryNum++
+			retryNum = &_retryNum
+			srv.MessageForwardSend(postUrl, retryNum)
 			return
 		}
 		fmt.Println("http error,err:", err.Error())
