@@ -9,14 +9,13 @@ import (
 	"runtime/debug"
 	"strconv"
 
-	"time"
-
 	"strings"
+
+	"time"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/message"
 	"github.com/dcsunny/wechat/util"
-	"github.com/go-resty/resty"
 )
 
 //Server struct
@@ -264,7 +263,9 @@ func (srv *Server) MessageForward() {
 }
 
 func (srv *Server) MessageForwardSend(postUrl string, retryNum *int) {
-	resp, err := resty.SetTimeout(4500*time.Microsecond).R().SetHeader("Content-Type", "text/xml").SetBody(srv.requestRawXMLMsg).Post(postUrl)
+
+	timeout := 4500 * time.Microsecond
+	resp, err := util.PostXML(postUrl, srv.requestMsg, &timeout)
 	if err != nil {
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
 			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("系统异常,请稍后再试")}
@@ -291,5 +292,5 @@ func (srv *Server) MessageForwardSend(postUrl string, retryNum *int) {
 		fmt.Println("http error,err:", err.Error())
 		return
 	}
-	srv.Render(resp.Body())
+	srv.Render(resp)
 }

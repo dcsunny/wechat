@@ -144,7 +144,7 @@ func (pcf *Pay) PrePayId(p *PayParams) (prePayID string, err error) {
 		TradeType:      tradeType,
 		OpenID:         p.OpenID,
 	}
-	rawRet, err := util.PostXML(payGateway, request)
+	rawRet, err := util.PostXML(payGateway, request, nil)
 	if err != nil {
 		return "", errors.New(err.Error() + " parameters : " + str)
 	}

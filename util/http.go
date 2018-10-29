@@ -10,6 +10,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"time"
 )
 
 //HTTPGet get 请求
@@ -123,16 +124,27 @@ func PostMultipartForm(fields []MultipartFormField, uri string) (respBody []byte
 }
 
 //PostXML perform a HTTP/POST request with XML body
-func PostXML(uri string, obj interface{}) ([]byte, error) {
+func PostXML(uri string, obj interface{}, timeout *time.Duration) ([]byte, error) {
 	xmlData, err := xml.Marshal(obj)
 	if err != nil {
 		return nil, err
 	}
 
 	body := bytes.NewBuffer(xmlData)
-	response, err := http.Post(uri, "application/xml;charset=utf-8", body)
-	if err != nil {
-		return nil, err
+	var response *http.Response
+	if timeout != nil {
+		client := &http.Client{
+			Timeout: *timeout,
+		}
+		response, err = client.Post(uri, "application/xml;charset=utf-8", body)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		response, err = http.Post(uri, "application/xml;charset=utf-8", body)
+		if err != nil {
+			return nil, err
+		}
 	}
 	defer response.Body.Close()
 
