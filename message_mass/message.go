@@ -10,7 +10,7 @@ import (
 
 const (
 	MessageMassSendByOpenIdURL = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s"
-	MessageMassSendByTagURL    = "ttps://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s"
+	MessageMassSendByTagURL    = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s"
 )
 
 type MessageMass struct {
@@ -102,6 +102,7 @@ func (service *MessageMass) SendByTag(msg *MessageByTag) (result MessageSassResu
 
 	err = json.Unmarshal(response, &result)
 	if err != nil {
+		fmt.Println(fmt.Sprintf("message mass send error,json:%s", string(response)))
 		return
 	}
 	if result.ErrCode != 0 {
