@@ -51,7 +51,7 @@ type MessageArticle struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	URL         string `json:"url"`
-	PicURL      string `json:"pic_url"`
+	PicURL      string `json:"picurl"`
 }
 
 //Send 发送客服消息
