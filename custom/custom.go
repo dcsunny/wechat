@@ -9,9 +9,11 @@ import (
 )
 
 const (
-	customUrl       = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
-	CustomTypeText  = "text"
-	CustomTypeImage = "image"
+	customUrl        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	CustomTypeText   = "text"
+	CustomTypeImage  = "image"
+	CustomTypeNews   = "news"
+	CustomTypeMpNews = "mpnews"
 )
 
 //客服消息
@@ -26,14 +28,30 @@ func NewCustom(context *context.Context) *Custom {
 }
 
 type Message struct {
-	Touser  string `json:"touser"`
-	Msgtype string `json:"msgtype"`
-	Text    struct {
-		Content string `json:"content"`
-	} `json:"text,omitempty"`
-	Image struct {
-		MediaId string `json:"media_id"`
-	} `json:"image,omitempty"`
+	Touser  string        `json:"touser"`
+	Msgtype string        `json:"msgtype"`
+	Text    *MessageText  `json:"text,omitempty"`
+	Image   *MessageImage `json:"image,omitempty"`
+	News    *MessageNews  `json:"news,omitempty"`
+}
+
+type MessageText struct {
+	Content string `json:"content"`
+}
+
+type MessageImage struct {
+	MediaID string `json:"media_id"`
+}
+
+type MessageNews struct {
+	Articles []MessageArticle `json:"articles"`
+}
+
+type MessageArticle struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+	URL         string `json:"url"`
+	PicURL      string `json:"pic_url"`
 }
 
 //Send 发送客服消息

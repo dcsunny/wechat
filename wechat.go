@@ -6,6 +6,7 @@ import (
 
 	"github.com/dcsunny/wechat/cache"
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/custom"
 	"github.com/dcsunny/wechat/js"
 	"github.com/dcsunny/wechat/material"
 	"github.com/dcsunny/wechat/menu"
@@ -115,4 +116,9 @@ func (wc *Wechat) GetMiniQrCode() *user.MiniQrCode {
 //用户标签接口
 func (wc *Wechat) GetTag() *user.Tag {
 	return user.NewTag(wc.Context)
+}
+
+//客服消息接口
+func (wc *Wechat) GetCustom() *custom.Custom {
+	return custom.NewCustom(wc.Context)
 }
