@@ -111,3 +111,8 @@ func (wc *Wechat) GetQrCode() *user.QrCode {
 func (wc *Wechat) GetMiniQrCode() *user.MiniQrCode {
 	return user.NewMiniQrCode(wc.Context)
 }
+
+//用户标签接口
+func (wc *Wechat) GetTag() *user.Tag {
+	return user.NewTag(wc.Context)
+}

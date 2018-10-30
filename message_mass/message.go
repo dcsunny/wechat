@@ -10,6 +10,7 @@ import (
 
 const (
 	MessageMassSendByOpenIdURL = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s"
+	MessageMassSendByTagURL    = "ttps://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s"
 )
 
 type MessageMass struct {
@@ -25,6 +26,18 @@ func NewMessageMass(context *context.Context) *MessageMass {
 type MessageByOpen struct {
 	Touser  []string `json:"touser"`
 	Msgtype string   `json:"msgtype"`
+	Text    struct {
+		Content string `json:"content"`
+	} `json:"text"`
+	Clientmsgid string `json:"clientmsgid"`
+}
+
+type MessageByTag struct {
+	Filter struct {
+		IsToAll bool `json:"is_to_all"`
+		TagID   int  `json:"tag_id"`
+	} `json:"filter"`
+	Msgtype string `json:"msgtype"`
 	Text    struct {
 		Content string `json:"content"`
 	} `json:"text"`
@@ -55,6 +68,36 @@ func (service *MessageMass) Send(msg *MessageByOpen) (result MessageSassResult, 
 		return
 	}
 	uri := fmt.Sprintf(MessageMassSendByOpenIdURL, accessToken)
+	response, err := util.PostJSON(uri, msg)
+
+	err = json.Unmarshal(response, &result)
+	if err != nil {
+		return
+	}
+	if result.ErrCode != 0 {
+		err = fmt.Errorf("message mass send error : errcode=%v , errmsg=%v", result.ErrCode, result.ErrMsg)
+		return
+	}
+	return
+}
+
+func NewTextMessageByTag(tag string, wxTag int, content string) MessageByTag {
+	message := MessageByTag{
+		Msgtype:     "text",
+		Clientmsgid: fmt.Sprint(wxTag) + tag,
+	}
+	message.Text.Content = content
+	message.Filter.TagID = wxTag
+	return message
+}
+
+func (service *MessageMass) SendByTag(msg *MessageByTag) (result MessageSassResult, err error) {
+	var accessToken string
+	accessToken, err = service.GetAccessToken()
+	if err != nil {
+		return
+	}
+	uri := fmt.Sprintf(MessageMassSendByTagURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	err = json.Unmarshal(response, &result)
