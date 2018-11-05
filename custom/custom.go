@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -56,7 +57,7 @@ type MessageArticle struct {
 
 //Send 发送客服消息
 
-func (tpl *Custom) Send(msg *Message) (result util.CommonError, err error) {
+func (tpl *Custom) Send(msg *Message) (result define.CommonError, err error) {
 	var accessToken string
 	accessToken, err = tpl.GetAccessToken()
 	if err != nil {

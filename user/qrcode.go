@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
+	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 	"github.com/qiniu/x/url.v7"
 )
@@ -38,7 +40,7 @@ type QrCodeScene struct {
 	SceneStr string `json:"scene_str"`
 }
 type QrCodeRet struct {
-	util.CommonError
+	define.CommonError
 	Ticket        string `json:"ticket"`
 	ExpireSeconds int64  `json:"expire_seconds"`
 	Url           string `json:"url"`
@@ -64,7 +66,7 @@ func (qr *QrCode) Create(params *QrCodeParams) (result QrCodeRet, err error) {
 		return
 	}
 	if result.ErrCode != 0 {
-		util.CommonErrorHandle(result.CommonError, qr.Context)
+		error2.CommonErrorHandle(result.CommonError, qr.Context)
 		err = fmt.Errorf("qrcode create error : errcode=%v , errmsg=%v", result.ErrCode, result.ErrMsg)
 		return
 	}

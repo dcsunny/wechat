@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -23,7 +24,7 @@ func (oauth *Oauth) GetQyRedirectURL(redirectURI, agentid, scope, state string) 
 
 //QyUserInfo 用户授权获取到用户信息
 type QyUserInfo struct {
-	util.CommonError
+	define.CommonError
 
 	UserID     string `json:"UserId"`
 	DeviceID   string `json:"DeviceId"`
@@ -57,7 +58,7 @@ func (oauth *Oauth) GetQyUserInfoByCode(code string) (result QyUserInfo, err err
 
 //QyUserDetail 到用户详情
 type QyUserDetail struct {
-	util.CommonError
+	define.CommonError
 
 	UserID string `json:"UserId"`
 	Name   string `json:"name"`

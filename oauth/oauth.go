@@ -7,6 +7,7 @@ import (
 	"net/url"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -49,7 +50,7 @@ func (oauth *Oauth) Redirect(writer http.ResponseWriter, req *http.Request, redi
 
 // ResAccessToken 获取用户授权access_token的返回结果
 type ResAccessToken struct {
-	util.CommonError
+	define.CommonError
 
 	AccessToken  string `json:"access_token"`
 	ExpiresIn    int64  `json:"expires_in"`
@@ -104,7 +105,7 @@ func (oauth *Oauth) CheckAccessToken(accessToken, openID string) (b bool, err er
 	if err != nil {
 		return
 	}
-	var result util.CommonError
+	var result define.CommonError
 	err = json.Unmarshal(response, &result)
 	if err != nil {
 		return
@@ -119,7 +120,7 @@ func (oauth *Oauth) CheckAccessToken(accessToken, openID string) (b bool, err er
 
 //UserInfo 用户授权获取到用户信息
 type UserInfo struct {
-	util.CommonError
+	define.CommonError
 
 	OpenID     string   `json:"openid"`
 	Nickname   string   `json:"nickname"`

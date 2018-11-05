@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
+	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -48,14 +50,14 @@ type resConditionalMenu struct {
 
 //resMenuTryMatch 菜单匹配请求结果
 type resMenuTryMatch struct {
-	util.CommonError
+	define.CommonError
 
 	Button []Button `json:"button"`
 }
 
 //ResMenu 查询菜单的返回数据
 type ResMenu struct {
-	util.CommonError
+	define.CommonError
 
 	Menu struct {
 		Button []Button `json:"button"`
@@ -66,7 +68,7 @@ type ResMenu struct {
 
 //ResSelfMenuInfo 自定义菜单配置返回结果
 type ResSelfMenuInfo struct {
-	util.CommonError
+	define.CommonError
 
 	IsMenuOpen   int32 `json:"is_menu_open"`
 	SelfMenuInfo struct {
@@ -134,7 +136,7 @@ func (menu *Menu) SetMenu(buttons []*Button) error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(menu.Context, response, "SetMenu")
+	return error2.DecodeWithCommonError(menu.Context, response, "SetMenu")
 }
 
 //GetMenu 获取菜单配置
@@ -172,7 +174,7 @@ func (menu *Menu) DeleteMenu() error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(menu.Context, response, "DeleteMenu")
+	return error2.DecodeWithCommonError(menu.Context, response, "DeleteMenu")
 }
 
 //AddConditional 添加个性化菜单
@@ -192,7 +194,7 @@ func (menu *Menu) AddConditional(buttons []*Button, matchRule *MatchRule) error 
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(menu.Context, response, "AddConditional")
+	return error2.DecodeWithCommonError(menu.Context, response, "AddConditional")
 }
 
 //DeleteConditional 删除个性化菜单
@@ -211,7 +213,7 @@ func (menu *Menu) DeleteConditional(menuID int64) error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(menu.Context, response, "DeleteConditional")
+	return error2.DecodeWithCommonError(menu.Context, response, "DeleteConditional")
 }
 
 //MenuTryMatch 菜单匹配

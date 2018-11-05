@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -17,7 +18,7 @@ const (
 
 //ResQyAccessToken struct
 type ResQyAccessToken struct {
-	util.CommonError
+	define.CommonError
 
 	AccessToken string `json:"access_token"`
 	ExpiresIn   int64  `json:"expires_in"`

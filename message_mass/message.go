@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -45,7 +46,7 @@ type MessageByTag struct {
 }
 
 type MessageSassResult struct {
-	util.CommonError
+	define.CommonError
 	Type      string `json:"type"`
 	MsgId     int64  `json:"msg_id"`
 	MsgDataId int64  `json:"msg_data_id"`

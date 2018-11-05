@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -29,7 +30,7 @@ const (
 
 //Media 临时素材上传返回信息
 type Media struct {
-	util.CommonError
+	define.CommonError
 
 	Type         MediaType `json:"type"`
 	MediaID      string    `json:"media_id"`
@@ -76,7 +77,7 @@ func (material *Material) GetMediaURL(mediaID string) (mediaURL string, err erro
 
 //resMediaImage 图片上传返回结果
 type resMediaImage struct {
-	util.CommonError
+	define.CommonError
 
 	URL string `json:"url"`
 }

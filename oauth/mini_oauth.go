@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
 type MiniSession struct {
-	util.CommonError
+	define.CommonError
 	OpenID     string `json:"openid"`
 	UnionID    string `json:"unionid"`
 	SessionKey string `json:"session_key"`

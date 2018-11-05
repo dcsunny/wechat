@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -55,12 +56,12 @@ type DataItem struct {
 }
 
 type resTemplateSend struct {
-	util.CommonError
+	define.CommonError
 
 	MsgID int64 `json:"msgid"`
 }
 type resTemplateMiniSend struct {
-	util.CommonError
+	define.CommonError
 	TemplateID string `json:"template_id"`
 }
 
@@ -123,7 +124,7 @@ func (tpl *Template) SendSubscribeMessage(msg *SubscribeMessage) (err error) {
 	}
 	uri := fmt.Sprintf("%s?access_token=%s", templateSubscribeSendURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
-	var result util.CommonError
+	var result define.CommonError
 	err = json.Unmarshal(response, &result)
 	if err != nil {
 		return

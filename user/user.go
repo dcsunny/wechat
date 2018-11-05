@@ -5,6 +5,8 @@ import (
 	"fmt"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
+	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -28,7 +30,7 @@ func NewUser(context *context.Context) *User {
 
 //Info 用户基本信息
 type Info struct {
-	util.CommonError
+	define.CommonError
 
 	Subscribe     int32   `json:"subscribe"`
 	OpenID        string  `json:"openid"`
@@ -74,7 +76,7 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 }
 
 type ListResult struct {
-	util.CommonError
+	define.CommonError
 
 	Total int64 `json:"total"`
 	Count int64 `json:"count"`
@@ -122,5 +124,5 @@ func (user *User) UpdateRemark(openID, remark string) (err error) {
 	if err != nil {
 		return
 	}
-	return util.DecodeWithCommonError(user.Context, response, "UpdateRemark")
+	return error2.DecodeWithCommonError(user.Context, response, "UpdateRemark")
 }

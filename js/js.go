@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -26,7 +27,7 @@ type Config struct {
 
 // resTicket 请求jsapi_tikcet返回结果
 type resTicket struct {
-	util.CommonError
+	define.CommonError
 
 	Ticket    string `json:"ticket"`
 	ExpiresIn int64  `json:"expires_in"`

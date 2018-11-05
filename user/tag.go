@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
+	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -29,7 +31,7 @@ type TagInfo struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`
 	} `json:"tag"`
-	util.CommonError
+	define.CommonError
 }
 
 func (tag *Tag) CreateTag(name string) (tagInfo TagInfo, err error) {
@@ -70,5 +72,5 @@ func (tag *Tag) UpdateUserTag(openIDs []string, tagID int) (err error) {
 		return
 	}
 	fmt.Println(string(response))
-	return util.DecodeWithCommonError(tag.Context, response, "UpdateUserTag")
+	return error2.DecodeWithCommonError(tag.Context, response, "UpdateUserTag")
 }

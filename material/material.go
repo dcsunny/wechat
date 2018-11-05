@@ -6,7 +6,9 @@ import (
 	"fmt"
 
 	"github.com/dcsunny/wechat/context"
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
+	error2 "github.com/dcsunny/wechat/error"
 )
 
 const (
@@ -45,7 +47,7 @@ type reqArticles struct {
 
 //resArticles 永久性图文素材返回结果
 type resArticles struct {
-	util.CommonError
+	define.CommonError
 
 	MediaID string `json:"media_id"`
 }
@@ -73,7 +75,7 @@ func (material *Material) AddNews(articles []*Article) (mediaID string, err erro
 
 //resAddMaterial 永久性素材上传返回的结果
 type resAddMaterial struct {
-	util.CommonError
+	define.CommonError
 
 	MediaID string `json:"media_id"`
 	URL     string `json:"url"`
@@ -184,5 +186,5 @@ func (material *Material) DeleteMaterial(mediaID string) error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(material.Context, response, "DeleteMaterial")
+	return error2.DecodeWithCommonError(material.Context, response, "DeleteMaterial")
 }
