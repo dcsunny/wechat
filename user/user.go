@@ -122,5 +122,5 @@ func (user *User) UpdateRemark(openID, remark string) (err error) {
 	if err != nil {
 		return
 	}
-	return util.DecodeWithCommonError(response, "UpdateRemark")
+	return util.DecodeWithCommonError(user.Context, response, "UpdateRemark")
 }

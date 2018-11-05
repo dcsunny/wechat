@@ -6,6 +6,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -32,7 +33,7 @@ func (ctx *Context) GetAccessToken() (accessToken string, err error) {
 	ctx.accessTokenLock.Lock()
 	defer ctx.accessTokenLock.Unlock()
 
-	accessTokenCacheKey := fmt.Sprintf("access_token:%s", ctx.AppID)
+	accessTokenCacheKey := fmt.Sprintf(define.AccessTokenCacheKey, ctx.AppID)
 	accessToken = ctx.Cache.GetString(accessTokenCacheKey)
 	if accessToken != "" {
 		return
@@ -69,7 +70,7 @@ func (ctx *Context) GetAccessTokenFromServer() (resAccessToken ResAccessToken, e
 		return
 	}
 
-	accessTokenCacheKey := fmt.Sprintf("access_token:%s", ctx.AppID)
+	accessTokenCacheKey := fmt.Sprintf(define.AccessTokenCacheKey, ctx.AppID)
 	expires := resAccessToken.ExpiresIn - 1500
 	err = ctx.Cache.SetString(accessTokenCacheKey, resAccessToken.AccessToken, time.Duration(expires)*time.Second)
 	return

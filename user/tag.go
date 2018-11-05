@@ -70,5 +70,5 @@ func (tag *Tag) UpdateUserTag(openIDs []string, tagID int) (err error) {
 		return
 	}
 	fmt.Println(string(response))
-	return util.DecodeWithCommonError(response, "UpdateUserTag")
+	return util.DecodeWithCommonError(tag.Context, response, "UpdateUserTag")
 }

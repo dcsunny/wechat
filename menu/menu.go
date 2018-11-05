@@ -134,7 +134,7 @@ func (menu *Menu) SetMenu(buttons []*Button) error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(response, "SetMenu")
+	return util.DecodeWithCommonError(menu.Context, response, "SetMenu")
 }
 
 //GetMenu 获取菜单配置
@@ -172,7 +172,7 @@ func (menu *Menu) DeleteMenu() error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(response, "DeleteMenu")
+	return util.DecodeWithCommonError(menu.Context, response, "DeleteMenu")
 }
 
 //AddConditional 添加个性化菜单
@@ -192,7 +192,7 @@ func (menu *Menu) AddConditional(buttons []*Button, matchRule *MatchRule) error 
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(response, "AddConditional")
+	return util.DecodeWithCommonError(menu.Context, response, "AddConditional")
 }
 
 //DeleteConditional 删除个性化菜单
@@ -211,7 +211,7 @@ func (menu *Menu) DeleteConditional(menuID int64) error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(response, "DeleteConditional")
+	return util.DecodeWithCommonError(menu.Context, response, "DeleteConditional")
 }
 
 //MenuTryMatch 菜单匹配

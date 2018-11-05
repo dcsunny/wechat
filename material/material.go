@@ -184,5 +184,5 @@ func (material *Material) DeleteMaterial(mediaID string) error {
 	if err != nil {
 		return err
 	}
-	return util.DecodeWithCommonError(response, "DeleteMaterial")
+	return util.DecodeWithCommonError(material.Context, response, "DeleteMaterial")
 }

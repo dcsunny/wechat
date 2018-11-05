@@ -64,6 +64,7 @@ func (qr *QrCode) Create(params *QrCodeParams) (result QrCodeRet, err error) {
 		return
 	}
 	if result.ErrCode != 0 {
+		util.CommonErrorHandle(result.CommonError, qr.Context)
 		err = fmt.Errorf("qrcode create error : errcode=%v , errmsg=%v", result.ErrCode, result.ErrMsg)
 		return
 	}
