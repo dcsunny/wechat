@@ -158,7 +158,10 @@ func (pcf *Pay) PrePayId(p *PayParams) (prePayID string, err error) {
 	}
 	if payRet.ReturnCode == "SUCCESS" {
 		//pay success
-		return payRet.PrePayID, nil
+		if payRet.ResultCode == "SUCCESS" {
+			return payRet.PrePayID, nil
+		}
+		return "", errors.New(payRet.ErrCode + payRet.ErrCodeDes)
 	} else {
 		return "", errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "] [params : " + str + "] [sign : " + sign + "]")
 	}
@@ -235,7 +238,10 @@ func (pcf *Pay) MchPay(p *PayParams) error {
 		return err
 	}
 	if payRet.ReturnCode == "SUCCESS" {
-		return nil
+		if payRet.ResultCode == "SUCCESS" {
+			return nil
+		}
+		return errors.New(payRet.ErrCodeDes)
 	} else {
 		return errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "]")
 	}
