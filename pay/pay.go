@@ -234,7 +234,7 @@ func (pcf *Pay) MchPay(p *PayParams) error {
 		return err
 	}
 	if payRet.ReturnCode == "SUCCESS" {
-		return errors.New(payRet.ErrCode + payRet.ErrCodeDes)
+		return nil
 	} else {
 		return errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "]")
 	}
