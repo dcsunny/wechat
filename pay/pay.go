@@ -227,6 +227,7 @@ func (pcf *Pay) MchPay(p *PayParams) error {
 		fmt.Println(err)
 		return err
 	}
+	fmt.Println(string(rawRet))
 	payRet := payResult{}
 	err = xml.Unmarshal(rawRet, &payRet)
 	if err != nil {
@@ -238,6 +239,5 @@ func (pcf *Pay) MchPay(p *PayParams) error {
 	} else {
 		return errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "]")
 	}
-	fmt.Println(string(rawRet))
 	return nil
 }

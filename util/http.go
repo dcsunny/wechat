@@ -130,7 +130,6 @@ func PostXML(uri string, obj interface{}, client *http.Client) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(xmlData))
 	body := bytes.NewBuffer(xmlData)
 	if client == nil {
 		client = http.DefaultClient
