@@ -11,7 +11,10 @@ import (
 	"github.com/dcsunny/wechat/util"
 )
 
-var payGateway = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+const (
+	payGateway  = "https://api.mch.weixin.qq.com/pay/unifiedorder"
+	mchTransUri = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers"
+)
 
 // Pay struct extends context
 type Pay struct {
@@ -155,10 +158,7 @@ func (pcf *Pay) PrePayId(p *PayParams) (prePayID string, err error) {
 	}
 	if payRet.ReturnCode == "SUCCESS" {
 		//pay success
-		if payRet.ResultCode == "SUCCESS" {
-			return payRet.PrePayID, nil
-		}
-		return "", errors.New(payRet.ErrCode + payRet.ErrCodeDes)
+		return payRet.PrePayID, nil
 	} else {
 		return "", errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "] [params : " + str + "] [sign : " + sign + "]")
 	}
@@ -175,4 +175,69 @@ func (pcf *Pay) JSPayParams(prePayID string) PayConfig {
 	str := fmt.Sprintf("appId=%s&nonceStr=%s&package=%s&signType=%s&timeStamp=%s&key=%s", payConf.AppID, payConf.NonceStr, payConf.Package, payConf.SignType, payConf.TimeStamp, pcf.PayKey)
 	payConf.PaySign = util.MD5Sum(str)
 	return payConf
+}
+func (pcf *Pay) Sign(variable interface{}, key string) (sign string, err error) {
+	ss := &SignStruct{
+		ToLower: false,
+		Tag:     "xml",
+	}
+	sign, err = ss.Sign(variable, nil, key)
+	return
+}
+
+type MchTransfersParams struct {
+	MchAppID       string `xml:"mch_appid"`
+	MchID          string `xml:"mchid"`
+	NonceStr       string `xml:"nonce_str"`
+	Sign           string `xml:"sign"`
+	PartnerTradeNo string `xml:"partner_trade_no"`
+	OpenID         string `xml:"openid"`
+	CheckName      string `xml:"check_name"`   //NO_CHECK：不校验真实姓名 FORCE_CHECK：强校验真实姓名
+	ReUserName     string `xml:"re_user_name"` //收款用户真实姓名。 如果check_name设置为FORCE_CHECK，则必填用户真实姓名
+	Amount         string `xml:"amount"`       //分
+	Desc           string `xml:"desc"`
+	SpbillCreateIp string `xml:"spbill_create_ip"`
+}
+
+func (pcf *Pay) MchPay(p *PayParams) error {
+	nonceStr := util.RandomStr(32)
+	params := &MchTransfersParams{
+		MchAppID:       pcf.AppID,
+		MchID:          pcf.PayMchID,
+		PartnerTradeNo: p.OutTradeNo,
+		OpenID:         p.OpenID,
+		NonceStr:       nonceStr,
+		CheckName:      "NO_CHECK",
+		Amount:         p.TotalFee,
+		Desc:           p.Body,
+		SpbillCreateIp: p.CreateIP,
+	}
+	sign, err := pcf.Sign(params, pcf.PayKey)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	params.Sign = sign
+	client, err := util.NewTLSHttpClient([]byte(pcf.PayCertPEMBlock), []byte(pcf.PayKeyPEMBlock))
+	if err != nil {
+		return err
+	}
+	rawRet, err := util.PostXML(mchTransUri, params, client)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	payRet := payResult{}
+	err = xml.Unmarshal(rawRet, &payRet)
+	if err != nil {
+		fmt.Println("xmlUnmarshalError,res:" + string(rawRet))
+		return err
+	}
+	if payRet.ReturnCode == "SUCCESS" {
+		return errors.New(payRet.ErrCode + payRet.ErrCodeDes)
+	} else {
+		return errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "]")
+	}
+	fmt.Println(string(rawRet))
+	return nil
 }

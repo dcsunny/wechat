@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"crypto/tls"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
@@ -124,27 +125,20 @@ func PostMultipartForm(fields []MultipartFormField, uri string) (respBody []byte
 }
 
 //PostXML perform a HTTP/POST request with XML body
-func PostXML(uri string, obj interface{}, timeout *time.Duration) ([]byte, error) {
+func PostXML(uri string, obj interface{}, client *http.Client) ([]byte, error) {
 	xmlData, err := xml.Marshal(obj)
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(string(xmlData))
 	body := bytes.NewBuffer(xmlData)
+	if client == nil {
+		client = http.DefaultClient
+	}
 	var response *http.Response
-	if timeout != nil {
-		client := &http.Client{
-			Timeout: *timeout,
-		}
-		response, err = client.Post(uri, "application/xml;charset=utf-8", body)
-		if err != nil {
-			return nil, err
-		}
-	} else {
-		response, err = http.Post(uri, "application/xml;charset=utf-8", body)
-		if err != nil {
-			return nil, err
-		}
+	response, err = client.Post(uri, "application/xml;charset=utf-8", body)
+	if err != nil {
+		return nil, err
 	}
 	defer response.Body.Close()
 
@@ -152,4 +146,37 @@ func PostXML(uri string, obj interface{}, timeout *time.Duration) ([]byte, error
 		return nil, fmt.Errorf("http code error : uri=%v , statusCode=%v", uri, response.StatusCode)
 	}
 	return ioutil.ReadAll(response.Body)
+}
+
+// NewHTTPSClient 获取默认https客户端
+func NewTLSHttpClientByFile(certFile, keyFile string) (httpClient *http.Client, err error) {
+	certPEMBlock, err := ioutil.ReadFile(certFile)
+	if err != nil {
+		return nil, err
+	}
+	keyPEMBlock, err := ioutil.ReadFile(keyFile)
+	if err != nil {
+		return nil, err
+	}
+	return NewTLSHttpClient(certPEMBlock, keyPEMBlock)
+}
+
+func NewTLSHttpClient(certPEMBlock, keyPEMBlock []byte) (httpClient *http.Client, err error) {
+	cert, err := tls.X509KeyPair(certPEMBlock, keyPEMBlock)
+	if err != nil {
+		return
+	}
+	tlsConfig := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+	}
+
+	httpClient = &http.Client{
+		Transport: &http.Transport{
+			Proxy:               http.ProxyFromEnvironment,
+			TLSClientConfig:     tlsConfig,
+			TLSHandshakeTimeout: 5 * time.Second,
+		},
+		Timeout: 15 * time.Second,
+	}
+	return
 }

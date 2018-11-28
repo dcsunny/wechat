@@ -24,15 +24,17 @@ type Wechat struct {
 
 // Config for user
 type Config struct {
-	AppID          string
-	AppSecret      string
-	Token          string
-	EncodingAESKey string
-	PayMchID       string //支付 - 商户 ID
-	PayNotifyURL   string //支付 - 接受微信支付结果通知的接口地址
-	PayKey         string //支付 - 商户后台设置的支付 key
-	AccessTokenURL string
-	Cache          cache.Cache
+	AppID           string
+	AppSecret       string
+	Token           string
+	EncodingAESKey  string
+	PayMchID        string //支付 - 商户 ID
+	PayNotifyURL    string //支付 - 接受微信支付结果通知的接口地址
+	PayKey          string //支付 - 商户后台设置的支付 key
+	AccessTokenURL  string
+	PayCertPEMBlock string
+	PayKeyPEMBlock  string
+	Cache           cache.Cache
 }
 
 // NewWechat init
@@ -50,6 +52,8 @@ func copyConfigToContext(cfg *Config, context *context.Context) {
 	context.PayMchID = cfg.PayMchID
 	context.PayKey = cfg.PayKey
 	context.PayNotifyURL = cfg.PayNotifyURL
+	context.PayCertPEMBlock = cfg.PayCertPEMBlock
+	context.PayKeyPEMBlock = cfg.PayKeyPEMBlock
 	context.Cache = cfg.Cache
 	context.AccessTokenURL = cfg.AccessTokenURL
 	context.SetAccessTokenLock(new(sync.RWMutex))

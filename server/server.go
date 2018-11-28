@@ -13,6 +13,8 @@ import (
 
 	"time"
 
+	"net/http"
+
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/message"
 	"github.com/dcsunny/wechat/util"
@@ -265,7 +267,10 @@ func (srv *Server) MessageForward() {
 func (srv *Server) MessageForwardSend(postUrl string, retryNum *int) {
 
 	timeout := 4500 * time.Millisecond
-	resp, err := util.PostXML(postUrl, srv.requestMsg, &timeout)
+	client := &http.Client{
+		Timeout: timeout,
+	}
+	resp, err := util.PostXML(postUrl, srv.requestMsg, client)
 	if err != nil {
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
 			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("系统异常,请稍后再试")}
