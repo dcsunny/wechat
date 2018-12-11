@@ -14,6 +14,7 @@ import (
 const (
 	payGateway  = "https://api.mch.weixin.qq.com/pay/unifiedorder"
 	mchTransUri = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers"
+	sendRedUri  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"
 )
 
 // Pay struct extends context
@@ -29,6 +30,12 @@ type PayParams struct {
 	Body       string
 	OutTradeNo string
 	OpenID     string
+	//以下红包使用
+	Wishing  string
+	SendName string
+	ActName  string
+	Remark   string
+	SceneID  string
 }
 
 // PayConfig 是传出用于 jsdk 用的参数
@@ -230,8 +237,89 @@ func (pcf *Pay) MchPay(p *PayParams) error {
 		fmt.Println(err)
 		return err
 	}
-	fmt.Println(string(rawRet))
 	payRet := payResult{}
+	err = xml.Unmarshal(rawRet, &payRet)
+	if err != nil {
+		fmt.Println("xmlUnmarshalError,res:" + string(rawRet))
+		return err
+	}
+	if payRet.ReturnCode == "SUCCESS" {
+		if payRet.ResultCode == "SUCCESS" {
+			return nil
+		}
+		return errors.New(payRet.ErrCodeDes)
+	} else {
+		return errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "]")
+	}
+	return nil
+}
+
+type RedParams struct {
+	NonceStr     string `xml:"nonce_str"`
+	Sign         string `xml:"sign"`
+	MchBillno    string `xml:"mch_billno"`
+	MchID        string `xml:"mch_id"`
+	WxAppID      string `xml:"wxappid"`
+	SendName     string `xml:"send_name"`
+	ReOpenID     string `xml:"re_openid"`
+	TotalAmount  string `xml:"total_amount"`
+	TotalNum     int    `xml:"total_num"`
+	Wishing      string `xml:"wishing"`
+	ClientIP     string `xml:"client_ip"`
+	ActName      string `xml:"act_name"`
+	Remark       string `xml:"remark"`
+	SceneID      string `xml:"scene_id"`
+	RiskInfo     string `xml:"risk_info"`
+	ConsumeMchID string `xml:"consume_mch_id"`
+}
+
+type RedResult struct {
+	ReturnCode  string `xml:"return_code"`
+	ReturnMsg   string `xml:"return_msg"`
+	ResultCode  string `xml:"result_code"`
+	ErrCode     string `xml:"err_code"`
+	ErrCodeDes  string `xml:"err_code_des"`
+	MchBillno   string `xml:"mch_billno"`
+	MchID       string `xml:"mch_id"`
+	WxAppID     string `xml:"wxappid"`
+	ReOpenID    string `xml:"re_openid"`
+	TotalAmount int    `xml:"total_amount"`
+	SendListid  string `xml:"send_listid"`
+}
+
+func (pcf *Pay) SendRed(p *PayParams) error {
+	nonceStr := util.RandomStr(32)
+	params := &RedParams{
+		NonceStr:    nonceStr,
+		MchBillno:   p.OutTradeNo,
+		MchID:       pcf.PayMchID,
+		WxAppID:     pcf.AppID,
+		SendName:    p.SendName,
+		ReOpenID:    p.OpenID,
+		TotalAmount: p.TotalFee,
+		TotalNum:    1,
+		Wishing:     p.Wishing,
+		ClientIP:    p.CreateIP,
+		ActName:     p.ActName,
+		Remark:      p.Remark,
+		SceneID:     p.SceneID,
+	}
+	sign, err := pcf.Sign(params, pcf.PayKey)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	params.Sign = sign
+	client, err := util.NewTLSHttpClient([]byte(pcf.PayCertPEMBlock), []byte(pcf.PayKeyPEMBlock))
+	if err != nil {
+		return err
+	}
+	rawRet, err := util.PostXML(sendRedUri, params, client)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	payRet := RedResult{}
 	err = xml.Unmarshal(rawRet, &payRet)
 	if err != nil {
 		fmt.Println("xmlUnmarshalError,res:" + string(rawRet))
