@@ -28,10 +28,11 @@ type Server struct {
 
 	messageHandler func(message.MixMessage) *message.Reply
 
-	requestRawXMLMsg  []byte
-	requestMsg        message.MixMessage
-	responseRawXMLMsg []byte
-	responseMsg       interface{}
+	requestRawXMLMsg    []byte
+	requestMsg          message.MixMessage
+	responseRawXMLMsg   []byte
+	responseNeedForward bool
+	responseMsg         interface{}
 
 	isSafeMode bool
 	random     []byte
@@ -173,9 +174,14 @@ func (srv *Server) buildResponse(reply *message.Reply) (err error) {
 		//do nothing
 		return nil
 	}
+	srv.responseNeedForward = true
 	msgType := reply.MsgType
 	switch msgType {
 	case message.MsgTypeText:
+		text := reply.MsgData.(message.Text)
+		if text.Content == "" {
+			srv.responseNeedForward = false
+		}
 	case message.MsgTypeImage:
 	case message.MsgTypeVoice:
 	case message.MsgTypeVideo:
@@ -225,8 +231,10 @@ func (srv *Server) Send() (err error) {
 		if srv.requestMsg.Event == message.EventView {
 			return
 		}
-		if srv.mssageForwardUrl != "" {
-			srv.MessageForward()
+		if srv.responseNeedForward {
+			if srv.mssageForwardUrl != "" {
+				srv.MessageForward()
+			}
 		}
 	}
 	return
