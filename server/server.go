@@ -178,7 +178,7 @@ func (srv *Server) buildResponse(reply *message.Reply) (err error) {
 	msgType := reply.MsgType
 	switch msgType {
 	case message.MsgTypeText:
-		text := reply.MsgData.(message.Text)
+		text := reply.MsgData.(*message.Text)
 		if text.Content == "" {
 			srv.responseNeedForward = false
 		}
