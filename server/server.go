@@ -181,6 +181,7 @@ func (srv *Server) buildResponse(reply *message.Reply) (err error) {
 		text := reply.MsgData.(*message.Text)
 		if text.Content == "" {
 			srv.responseNeedForward = false
+			return nil
 		}
 	case message.MsgTypeImage:
 	case message.MsgTypeVoice:
