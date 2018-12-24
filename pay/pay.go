@@ -140,10 +140,19 @@ func NewPay(ctx *context.Context) *Pay {
 	return &pay
 }
 
-// PrePayId will request wechat merchant api and request for a pre payment order id
-func (pcf *Pay) PrePayId(p *PayParams) (prePayID string, err error) {
-	nonceStr := util.RandomStr(32)
+func (pcf *Pay) PrePayIdByJs(p *PayParams) (prePayID string, err error) {
 	tradeType := "JSAPI"
+	return pcf.PrePayId(p, tradeType)
+}
+
+func (pcf *Pay) PrePayIdByApp(p *PayParams) (prePayID string, err error) {
+	tradeType := "APP"
+	return pcf.PrePayId(p, tradeType)
+}
+
+// PrePayId will request wechat merchant api and request for a pre payment order id
+func (pcf *Pay) PrePayId(p *PayParams, tradeType string) (prePayID string, err error) {
+	nonceStr := util.RandomStr(32)
 	template := "appid=%s&body=%s&mch_id=%s&nonce_str=%s"
 	if pcf.PayNotifyURL != "" {
 		template = template + fmt.Sprintf("&notify_url=%s", pcf.PayNotifyURL)
