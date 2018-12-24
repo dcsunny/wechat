@@ -48,6 +48,16 @@ type PayConfig struct {
 	PaySign   string `json:"paySign"`
 }
 
+type AppPayConfig struct {
+	AppID     string `json:"appid"`
+	PartnerID string `json:"partnerid"`
+	PrePayID  string `json:"prepayid"`
+	Package   string `json:"package"`
+	NonceStr  string `json:"noncestr"`
+	Timestamp string `json:"timestamp"`
+	Sign      string `json:"sign"`
+}
+
 // payResult 是 unifie order 接口的返回
 type payResult struct {
 	ReturnCode string `xml:"return_code"`
@@ -186,6 +196,25 @@ func (pcf *Pay) JSPayParams(prePayID string) PayConfig {
 	payConf.PaySign = util.MD5Sum(str)
 	return payConf
 }
+
+func (pcf *Pay) AppPayParams(prePayID string) AppPayConfig {
+	payConf := AppPayConfig{
+		AppID:     pcf.AppID,
+		PartnerID: pcf.PayMchID,
+		PrePayID:  prePayID,
+		Package:   "Sign=WXPay",
+		NonceStr:  util.RandomStr(32),
+		Timestamp: fmt.Sprintf("%d", time.Now().Unix()),
+	}
+	sign, err := pcf.Sign(payConf, pcf.PayKey)
+	if err != nil {
+		fmt.Println(err)
+		return payConf
+	}
+	payConf.Sign = sign
+	return payConf
+}
+
 func (pcf *Pay) Sign(variable interface{}, key string) (sign string, err error) {
 	ss := &SignStruct{
 		ToLower: false,
