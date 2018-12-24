@@ -215,7 +215,7 @@ func (pcf *Pay) AppPayParams(prePayID string) AppPayConfig {
 		NonceStr:  util.RandomStr(32),
 		Timestamp: fmt.Sprintf("%d", time.Now().Unix()),
 	}
-	sign, err := pcf.Sign(payConf, pcf.PayKey)
+	sign, err := pcf.Sign(&payConf, pcf.PayKey)
 	if err != nil {
 		fmt.Println(err)
 		return payConf
