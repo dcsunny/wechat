@@ -40,22 +40,22 @@ type PayParams struct {
 
 // PayConfig 是传出用于 jsdk 用的参数
 type PayConfig struct {
-	AppID     string `json:"appId"`
-	TimeStamp string `json:"timeStamp"`
-	NonceStr  string `json:"nonceStr"`
-	Package   string `json:"package"`
-	SignType  string `json:"signType"`
-	PaySign   string `json:"paySign"`
+	AppID     string `xml:"appId",json:"appId"`
+	TimeStamp string `xml:"timeStamp",json:"timeStamp"`
+	NonceStr  string `xml:"nonceStr",json:"nonceStr"`
+	Package   string `xml:"package",json:"package"`
+	SignType  string `xml:"signType",json:"signType"`
+	PaySign   string `xml:"paySign",json:"paySign"`
 }
 
 type AppPayConfig struct {
-	AppID     string `json:"appid"`
-	PartnerID string `json:"partnerid"`
-	PrePayID  string `json:"prepayid"`
-	Package   string `json:"package"`
-	NonceStr  string `json:"noncestr"`
-	Timestamp string `json:"timestamp"`
-	Sign      string `json:"sign"`
+	AppID     string `xml:"appid",json:"appid"`
+	PartnerID string `xml:"partnerid",json:"partnerid"`
+	PrePayID  string `xml:"prepayid",json:"prepayid"`
+	Package   string `xml:"package",json:"package"`
+	NonceStr  string `xml:"noncestr",json:"noncestr"`
+	Timestamp string `xml:"timestamp",json:"timestamp"`
+	Sign      string `xml:"sign",json:"sign"`
 }
 
 // payResult 是 unifie order 接口的返回
