@@ -170,11 +170,11 @@ func (srv *Server) buildResponse(reply *message.Reply) (err error) {
 			err = fmt.Errorf("panic error: %v\n%s", e, debug.Stack())
 		}
 	}()
+	srv.responseNeedForward = true
 	if reply == nil {
 		//do nothing
 		return nil
 	}
-	srv.responseNeedForward = true
 	msgType := reply.MsgType
 	switch msgType {
 	case message.MsgTypeText:
