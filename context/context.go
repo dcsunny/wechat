@@ -19,7 +19,7 @@ type Context struct {
 	PayCertPEMBlock string
 	PayKeyPEMBlock  string
 
-	AccessTokenURL  string
+	AccessTokenURL string
 
 	Cache cache.Cache
 

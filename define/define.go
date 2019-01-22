@@ -1,7 +1,9 @@
 package define
 
 const (
-	AccessTokenCacheKey = "access_token:%s"
+	AccessTokenCacheKey          = "access_token:%s"
+	MiniAccessTokenCacheKey      = "mini_access_token_:%s"
+	ComponentAccessTokenCacheKey = "component_access_token_%s"
 )
 
 // CommonError 微信返回的通用错误json

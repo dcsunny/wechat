@@ -78,15 +78,15 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 type ListResult struct {
 	define.CommonError
 
-	Total int64 `json:"total"`
-	Count int64 `json:"count"`
+	Total int `json:"total"`
+	Count int `json:"count"`
 	Data  struct {
-		OpenID []string `json:"openid"`
+		OpenIDs []string `json:"openid"`
 	} `json:"data"`
 	NextOpenID string `json:"next_openid"`
 }
 
-func (user *User) List(nexOpenID string) (users ListResult, err error) {
+func (user *User) ListUserOpenIDs(nexOpenID string) (users ListResult, err error) {
 	var accessToken string
 	accessToken, err = user.GetAccessToken()
 	if err != nil {
@@ -110,6 +110,25 @@ func (user *User) List(nexOpenID string) (users ListResult, err error) {
 		return
 	}
 	return
+}
+
+func (user *User) ListAllUserOpenIDs() ([]string, error) {
+	nextOpenid := ""
+	openids := []string{}
+	count := 0
+	for {
+		ul, err := user.ListUserOpenIDs(nextOpenid)
+		if err != nil {
+			return nil, err
+		}
+		openids = append(openids, ul.Data.OpenIDs...)
+		count += ul.Count
+		if ul.Total > count {
+			nextOpenid = ul.NextOpenID
+		} else {
+			return openids, nil
+		}
+	}
 }
 
 func (user *User) UpdateRemark(openID, remark string) (err error) {

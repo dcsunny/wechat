@@ -30,7 +30,7 @@ func (ctx *Context) GetMiniAccessToken() (accessToken string, err error) {
 	ctx.accessTokenLock.Lock()
 	defer ctx.accessTokenLock.Unlock()
 
-	accessTokenCacheKey := fmt.Sprintf("mini_access_token_%s", ctx.AppID)
+	accessTokenCacheKey := fmt.Sprintf(define.MiniAccessTokenCacheKey, ctx.AppID)
 	accessToken = ctx.Cache.GetString(accessTokenCacheKey)
 	if accessToken != "" {
 		return
@@ -64,7 +64,7 @@ func (ctx *Context) GetMiniAccessTokenFromServer() (resQyAccessToken ResQyAccess
 		return
 	}
 
-	AccessTokenCacheKey := fmt.Sprintf("mini_access_token_%s", ctx.AppID)
+	AccessTokenCacheKey := fmt.Sprintf(define.MiniAccessTokenCacheKey, ctx.AppID)
 	expires := resQyAccessToken.ExpiresIn - 1500
 	err = ctx.Cache.SetString(AccessTokenCacheKey, resQyAccessToken.AccessToken, time.Duration(expires)*time.Second)
 	return

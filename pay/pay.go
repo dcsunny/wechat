@@ -24,12 +24,13 @@ type Pay struct {
 
 // 传入的参数，用于生成 prepay_id 的必需参数
 // PayParams was NEEDED when request unifiedorder
-type PayParams struct {
-	TotalFee   string
+type Params struct {
+	TotalFee   int
 	CreateIP   string
 	Body       string
 	OutTradeNo string
 	OpenID     string
+	TradeType  string
 	//以下红包使用
 	Wishing  string
 	SendName string
@@ -46,6 +47,21 @@ type PayConfig struct {
 	Package   string `xml:"package" json:"package"`
 	SignType  string `xml:"signType" json:"signType"`
 	PaySign   string `xml:"paySign" json:"paySign"`
+}
+
+type PreOrder struct {
+	ReturnCode string `xml:"return_code"`
+	ReturnMsg  string `xml:"return_msg"`
+	AppID      string `xml:"appid,omitempty"`
+	MchID      string `xml:"mch_id,omitempty"`
+	NonceStr   string `xml:"nonce_str,omitempty"`
+	Sign       string `xml:"sign,omitempty"`
+	ResultCode string `xml:"result_code,omitempty"`
+	TradeType  string `xml:"trade_type,omitempty"`
+	PrePayID   string `xml:"prepay_id,omitempty"`
+	CodeURL    string `xml:"code_url,omitempty"`
+	ErrCode    string `xml:"err_code,omitempty"`
+	ErrCodeDes string `xml:"err_code_des,omitempty"`
 }
 
 type AppPayConfig struct {
@@ -87,7 +103,7 @@ type payRequest struct {
 	Attach         string `xml:"attach,omitempty"`      //附加数据
 	OutTradeNo     string `xml:"out_trade_no"`          //商户订单号
 	FeeType        string `xml:"fee_type,omitempty"`    //标价币种
-	TotalFee       string `xml:"total_fee"`             //标价金额
+	TotalFee       int    `xml:"total_fee"`             //标价金额
 	SpbillCreateIp string `xml:"spbill_create_ip"`      //终端IP
 	TimeStart      string `xml:"time_start,omitempty"`  //交易起始时间
 	TimeExpire     string `xml:"time_expire,omitempty"` //交易结束时间
@@ -140,57 +156,77 @@ func NewPay(ctx *context.Context) *Pay {
 	return &pay
 }
 
-func (pcf *Pay) PrePayIdByJs(p *PayParams) (prePayID string, err error) {
-	tradeType := "JSAPI"
-	return pcf.PrePayId(p, tradeType)
+func (pcf *Pay) PrePayIdByJs(p *Params) (prePayID string, err error) {
+	p.TradeType = "JSAPI"
+	return pcf.PrePayId(p)
 }
 
-func (pcf *Pay) PrePayIdByApp(p *PayParams) (prePayID string, err error) {
-	tradeType := "APP"
-	return pcf.PrePayId(p, tradeType)
+func (pcf *Pay) PrePayIdByApp(p *Params) (prePayID string, err error) {
+	p.TradeType = "APP"
+	return pcf.PrePayId(p)
 }
 
-// PrePayId will request wechat merchant api and request for a pre payment order id
-func (pcf *Pay) PrePayId(p *PayParams, tradeType string) (prePayID string, err error) {
+func (pcf *Pay) PrePayOrderByJs(p *Params) (payOrder PreOrder, err error) {
+	p.TradeType = "JSAPI"
+	return pcf.PrePayOrder(p)
+}
+
+func (pcf *Pay) PrePayOrderByApp(p *Params) (payOrder PreOrder, err error) {
+	p.TradeType = "APP"
+	return pcf.PrePayOrder(p)
+}
+
+func (pcf *Pay) PrePayOrder(p *Params) (payOrder PreOrder, err error) {
 	nonceStr := util.RandomStr(32)
-	template := "appid=%s&body=%s&mch_id=%s&nonce_str=%s"
-	if pcf.PayNotifyURL != "" {
-		template = template + fmt.Sprintf("&notify_url=%s", pcf.PayNotifyURL)
-	}
-	template = template + "&openid=%s&out_trade_no=%s&spbill_create_ip=%s&total_fee=%s&trade_type=%s&key=%s"
-	str := fmt.Sprintf(template, pcf.AppID, p.Body, pcf.PayMchID, nonceStr, p.OpenID, p.OutTradeNo, p.CreateIP, p.TotalFee, tradeType, pcf.PayKey)
-	sign := util.MD5Sum(str)
+
 	request := payRequest{
 		AppID:          pcf.AppID,
 		MchID:          pcf.PayMchID,
 		NonceStr:       nonceStr,
-		Sign:           sign,
 		Body:           p.Body,
 		OutTradeNo:     p.OutTradeNo,
 		TotalFee:       p.TotalFee,
 		SpbillCreateIp: p.CreateIP,
 		NotifyUrl:      pcf.PayNotifyURL,
-		TradeType:      tradeType,
+		TradeType:      p.TradeType,
 		OpenID:         p.OpenID,
 	}
+	sign, err := pcf.Sign(&request, pcf.PayKey)
+	if err != nil {
+		fmt.Println(err)
+		return payOrder, err
+	}
+	request.Sign = sign
 	rawRet, err := util.PostXML(payGateway, request, nil)
 	if err != nil {
-		return "", errors.New(err.Error() + " parameters : " + str)
+		return PreOrder{}, errors.New(err.Error())
 	}
-	payRet := payResult{}
-	err = xml.Unmarshal(rawRet, &payRet)
+	err = xml.Unmarshal(rawRet, &payOrder)
 	if err != nil {
-		return "", errors.New(err.Error())
+		return payOrder, errors.New(err.Error())
 	}
-	if payRet.ReturnCode == "SUCCESS" {
+	if payOrder.ReturnCode == "SUCCESS" {
 		//pay success
-		if payRet.ResultCode == "SUCCESS" {
-			return payRet.PrePayID, nil
+		if payOrder.ResultCode == "SUCCESS" {
+			return payOrder, nil
 		}
-		return "", errors.New(payRet.ErrCode + payRet.ErrCodeDes)
+		return payOrder, errors.New(payOrder.ErrCode + payOrder.ErrCodeDes)
 	} else {
-		return "", errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "] [params : " + str + "] [sign : " + sign + "]")
+		return payOrder, errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "] [sign : " + sign + "]")
 	}
+}
+
+// PrePayId will request wechat merchant api and request for a pre payment order id
+func (pcf *Pay) PrePayId(p *Params) (prePayID string, err error) {
+	order, err := pcf.PrePayOrder(p)
+	if err != nil {
+		return
+	}
+	if order.PrePayID == "" {
+		err = errors.New("empty prepayid")
+	}
+	prePayID = order.PrePayID
+	return
 }
 
 func (pcf *Pay) JSPayParams(prePayID string) PayConfig {
@@ -242,12 +278,12 @@ type MchTransfersParams struct {
 	OpenID         string `xml:"openid"`
 	CheckName      string `xml:"check_name"`   //NO_CHECK：不校验真实姓名 FORCE_CHECK：强校验真实姓名
 	ReUserName     string `xml:"re_user_name"` //收款用户真实姓名。 如果check_name设置为FORCE_CHECK，则必填用户真实姓名
-	Amount         string `xml:"amount"`       //分
+	Amount         int    `xml:"amount"`       //分
 	Desc           string `xml:"desc"`
 	SpbillCreateIp string `xml:"spbill_create_ip"`
 }
 
-func (pcf *Pay) MchPay(p *PayParams) error {
+func (pcf *Pay) MchPay(p *Params) error {
 	nonceStr := util.RandomStr(32)
 	params := &MchTransfersParams{
 		MchAppID:       pcf.AppID,
@@ -300,7 +336,7 @@ type RedParams struct {
 	WxAppID      string `xml:"wxappid"`
 	SendName     string `xml:"send_name"`
 	ReOpenID     string `xml:"re_openid"`
-	TotalAmount  string `xml:"total_amount"`
+	TotalAmount  int    `xml:"total_amount"`
 	TotalNum     int    `xml:"total_num"`
 	Wishing      string `xml:"wishing"`
 	ClientIP     string `xml:"client_ip"`
@@ -325,7 +361,7 @@ type RedResult struct {
 	SendListid  string `xml:"send_listid"`
 }
 
-func (pcf *Pay) SendRed(p *PayParams) error {
+func (pcf *Pay) SendRed(p *Params) error {
 	nonceStr := util.RandomStr(32)
 	params := &RedParams{
 		NonceStr:    nonceStr,
