@@ -72,6 +72,10 @@ func (wc *Wechat) GetAccessToken() (string, error) {
 	return wc.Context.GetAccessToken()
 }
 
+func (wc *Wechat) GetMiniAccessToken() (string, error) {
+	return wc.Context.GetMiniAccessToken()
+}
+
 // GetOauth oauth2网页授权
 func (wc *Wechat) GetOauth() *oauth.Oauth {
 	return oauth.NewOauth(wc.Context)
