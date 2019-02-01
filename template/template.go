@@ -90,7 +90,7 @@ func (tpl *Template) Send(msg *Message) (msgID int64, err error) {
 
 func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
 	var accessToken string
-	accessToken, err = tpl.GetMiniAccessToken()
+	accessToken, err = tpl.GetAccessToken()
 	if err != nil {
 		return
 	}

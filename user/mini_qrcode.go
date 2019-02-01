@@ -47,7 +47,7 @@ func NewMiniQrCode(context *context.Context) *MiniQrCode {
 //小程序码 不带scene参数
 func (qr *MiniQrCode) CreateMiniForeverRoundCode(params *MiniCodeParams) (reader *bytes.Reader, err error) {
 	var accessToken string
-	accessToken, err = qr.GetMiniAccessToken()
+	accessToken, err = qr.GetAccessToken()
 	if err != nil {
 		return
 	}
@@ -73,7 +73,7 @@ func (qr *MiniQrCode) CreateMiniForeverRoundCode(params *MiniCodeParams) (reader
 //小程序二维码码 //底部有 "微信扫一扫,使用小程序"字样
 func (qr *MiniQrCode) CreateMiniForeverSquareCode(params *MiniCodeParams) (reader *bytes.Reader, err error) {
 	var accessToken string
-	accessToken, err = qr.GetMiniAccessToken()
+	accessToken, err = qr.GetAccessToken()
 	if err != nil {
 		return
 	}
@@ -99,7 +99,7 @@ func (qr *MiniQrCode) CreateMiniForeverSquareCode(params *MiniCodeParams) (reade
 //无限制的小程序码,必须携带scene
 func (qr *MiniQrCode) CreateMiniForeverUnLimitCode(params *MiniCodeParams) (reader *bytes.Reader, err error) {
 	var accessToken string
-	accessToken, err = qr.GetMiniAccessToken()
+	accessToken, err = qr.GetAccessToken()
 	if err != nil {
 		return
 	}
