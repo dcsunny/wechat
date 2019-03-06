@@ -10,11 +10,13 @@ import (
 )
 
 const (
-	customUrl        = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
-	CustomTypeText   = "text"
-	CustomTypeImage  = "image"
-	CustomTypeNews   = "news"
-	CustomTypeMpNews = "mpnews"
+	customUrl                 = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	CustomTypeText            = "text"
+	CustomTypeImage           = "image"
+	CustomTypeNews            = "news"
+	CustomTypeMpNews          = "mpnews"
+	CustomTypeMenu            = "msgmenu"
+	CustomTypeMiniprogrampage = "miniprogrampage"
 )
 
 //客服消息
@@ -29,11 +31,36 @@ func NewCustom(context *context.Context) *Custom {
 }
 
 type Message struct {
-	Touser  string        `json:"touser"`
-	Msgtype string        `json:"msgtype"`
-	Text    *MessageText  `json:"text,omitempty"`
-	Image   *MessageImage `json:"image,omitempty"`
-	News    *MessageNews  `json:"news,omitempty"`
+	Touser          string                  `json:"touser"`
+	Msgtype         string                  `json:"msgtype"`
+	Customservice   *MessageCustomservice   `json:"customservice,omitempty"`
+	Text            *MessageText            `json:"text,omitempty"`
+	Image           *MessageImage           `json:"image,omitempty"`
+	News            *MessageNews            `json:"news,omitempty"`
+	Msgmenu         *MessageMsgmenus        `json:"msgmenu,omitempty"`
+	Miniprogrampage *MeesageMiniprogrampage `json:"miniprogrampage,omitempty"`
+}
+
+type MessageCustomservice struct {
+	KfAccount string `json:"kf_account"`
+}
+
+type MeesageMiniprogrampage struct {
+	Title        string `json:"title"`
+	AppID        string `json:"appid"`
+	PagePath     string `json:"pagepath"`
+	ThumbMediaID string `json:"thumb_media_id"`
+}
+
+type MessageMsgmenus struct {
+	HeadContent string           `json:"head_content"`
+	List        []MessageMsgmenu `json:"list"`
+	TailContent string           `json:"tail_content"`
+}
+
+type MessageMsgmenu struct {
+	ID      string `json:"id"`
+	Content string `json:"content"`
 }
 
 type MessageText struct {
