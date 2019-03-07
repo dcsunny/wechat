@@ -140,9 +140,8 @@ type MixMessage struct {
 	PreAuthCode                  string   `xml:"PreAuthCode"`
 
 	//小程序相关
-	PagePath     string `xml:"PagePath"`
-	ThumbUrl     string `xml:"ThumbUrl"`
-	ThumbMediaId string `xml:"ThumbMediaId"`
+	PagePath string `xml:"PagePath"`
+	ThumbUrl string `xml:"ThumbUrl"`
 }
 
 //EventPic 发图事件推送
