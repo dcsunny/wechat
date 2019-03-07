@@ -34,6 +34,8 @@ const (
 	MsgTypeTransfer = "transfer_customer_service"
 	//MsgTypeEvent 表示事件推送消息
 	MsgTypeEvent = "event"
+	//MsgTypeMiniprogrampage 表示小程序卡片消息
+	MsgTypeMiniprogrampage = "miniprogrampage"
 )
 
 const (
@@ -63,6 +65,8 @@ const (
 	EventLocationSelect = "location_select"
 	//EventTemplateSendJobFinish 发送模板消息推送通知
 	EventTemplateSendJobFinish = "TEMPLATESENDJOBFINISH"
+	//EventUserEnterTempsession 用户在小程序“客服会话按钮”进入客服会话时
+	EventUserEnterTempsession = "user_enter_tempsession"
 )
 
 const (
@@ -92,7 +96,7 @@ type MixMessage struct {
 	LocationY    float64 `xml:"Location_Y"`
 	Scale        float64 `xml:"Scale"`
 	Label        string  `xml:"Label"`
-	Title        string  `xml:"Title"`
+	Title        string  `xml:"Title"` //小程序消息也有
 	Description  string  `xml:"Description"`
 	URL          string  `xml:"Url"`
 	Bizmsgmenuid string  `xml:"bizmsgmenuid"`
@@ -106,7 +110,7 @@ type MixMessage struct {
 	Precision   string    `xml:"Precision"`
 	MenuID      string    `xml:"MenuId"`
 	Status      string    `xml:"Status"`
-	SessionFrom string    `xml:"SessionFrom"`
+	SessionFrom string    `xml:"SessionFrom"` //小程序消息也有
 
 	ScanCodeInfo struct {
 		ScanType   string `xml:"ScanType"`
@@ -128,12 +132,17 @@ type MixMessage struct {
 
 	// 第三方平台相关
 	InfoType                     InfoType `xml:"InfoType"`
-	AppID                        string   `xml:"AppId"`
+	AppID                        string   `xml:"AppId"` //小程序消息也有
 	ComponentVerifyTicket        string   `xml:"ComponentVerifyTicket"`
 	AuthorizerAppid              string   `xml:"AuthorizerAppid"`
 	AuthorizationCode            string   `xml:"AuthorizationCode"`
 	AuthorizationCodeExpiredTime int64    `xml:"AuthorizationCodeExpiredTime"`
 	PreAuthCode                  string   `xml:"PreAuthCode"`
+
+	//小程序相关
+	PagePath     string `xml:"PagePath"`
+	ThumbUrl     string `xml:"ThumbUrl"`
+	ThumbMediaId string `xml:"ThumbMediaId"`
 }
 
 //EventPic 发图事件推送
