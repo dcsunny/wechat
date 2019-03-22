@@ -15,6 +15,7 @@ const (
 	payGateway  = "https://api.mch.weixin.qq.com/pay/unifiedorder"
 	mchTransUri = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers"
 	sendRedUri  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"
+	refundUri   = "https://api.mch.weixin.qq.com/secapi/pay/refund"
 )
 
 // Pay struct extends context
@@ -394,6 +395,98 @@ func (pcf *Pay) SendRed(p *Params) error {
 		return err
 	}
 	payRet := RedResult{}
+	err = xml.Unmarshal(rawRet, &payRet)
+	if err != nil {
+		fmt.Println("xmlUnmarshalError,res:" + string(rawRet))
+		return err
+	}
+	if payRet.ReturnCode == "SUCCESS" {
+		if payRet.ResultCode == "SUCCESS" {
+			return nil
+		}
+		return errors.New(payRet.ErrCodeDes)
+	} else {
+		return errors.New("[msg : xmlUnmarshalError] [rawReturn : " + string(rawRet) + "]")
+	}
+	return nil
+}
+
+type WxRefundParams struct {
+	AppID         string  `xml:"appid"`
+	MchID         string  `xml:"mchid"`
+	NonceStr      string  `xml:"nonce_str"`
+	Sign          string  `xml:"sign"`
+	SignType      *string `xml:"sign_type"`
+	TransactionID *string `xml:"transaction_id"`
+	OutTradeNo    *string `xml:"out_trade_no"`
+	OutRefundNo   string  `xml:"out_refund_no"`
+	TotalFee      int     `xml:"total_fee"`
+	RefundFee     int     `xml:"refund_fee"`
+	RefundFeeType *string `xml:"refund_fee_type"`
+	RefundDesc    *string `xml:"refund_desc"`
+	RefundAccount *string `xml:"refund_account"`
+	NotifyUrl     *string `xml:"notify_url"`
+}
+type RefundParams struct {
+	TotalFee      int
+	RefundFee     int
+	CreateIP      string
+	OutRefundNo   string
+	TransactionID *string
+	OutTradeNo    *string
+}
+type RefundResult struct {
+	ReturnCode          string `xml:"return_code"`
+	ReturnMsg           string `xml:"return_msg"`
+	ResultCode          string `xml:"result_code"`
+	ErrCode             string `xml:"err_code"`
+	ErrCodeDes          string `xml:"err_code_des"`
+	AppID               string `xml:"appid"`
+	MchID               string `xml:"mch_id"`
+	NonceStr            string `xml:"nonce_str"`
+	Sign                string `xml:"sign"`
+	TransactionID       string `xml:"transaction_id"`
+	OutTradeNo          string `xml:"out_trade_no"`
+	OutRefundNo         string `xml:"out_refund_no"`
+	RefundID            string `xml:"refund_id"`
+	RefundFee           int    `xml:"refund_fee"`
+	SettlementRefundFee int    `xml:"settlement_refund_fee"`
+	TotalFee            int    `xml:"total_fee"`
+	SettlementTotalFee  int    `xml:"settlement_total_fee"`
+	FeeType             string `xml:"fee_type"`
+	CashFee             int    `xml:"cash_fee"`
+	CashFeeType         string `xml:"cash_fee_type"`
+	CashRefundFee       int    `xml:"cash_refund_fee"`
+}
+
+func (pcf *Pay) Refund(p *RefundParams) error {
+	nonceStr := util.RandomStr(32)
+	params := &WxRefundParams{
+		AppID:         pcf.AppID,
+		MchID:         pcf.PayMchID,
+		NonceStr:      nonceStr,
+		OutRefundNo:   p.OutRefundNo,
+		TotalFee:      p.TotalFee,
+		RefundFee:     p.RefundFee,
+		TransactionID: p.TransactionID,
+		OutTradeNo:    p.OutTradeNo,
+	}
+	sign, err := pcf.Sign(params, pcf.PayKey)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	params.Sign = sign
+	client, err := util.NewTLSHttpClient([]byte(pcf.PayCertPEMBlock), []byte(pcf.PayKeyPEMBlock))
+	if err != nil {
+		return err
+	}
+	rawRet, err := util.PostXML(sendRedUri, params, client)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	payRet := RefundResult{}
 	err = xml.Unmarshal(rawRet, &payRet)
 	if err != nil {
 		fmt.Println("xmlUnmarshalError,res:" + string(rawRet))
