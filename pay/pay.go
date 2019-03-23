@@ -413,7 +413,7 @@ func (pcf *Pay) SendRed(p *Params) error {
 
 type WxRefundParams struct {
 	AppID         string  `xml:"appid"`
-	MchID         string  `xml:"mchid"`
+	MchID         string  `xml:"mch_id"`
 	NonceStr      string  `xml:"nonce_str"`
 	Sign          string  `xml:"sign"`
 	SignType      *string `xml:"sign_type"`
