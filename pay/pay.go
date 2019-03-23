@@ -481,7 +481,7 @@ func (pcf *Pay) Refund(p *RefundParams) error {
 	if err != nil {
 		return err
 	}
-	rawRet, err := util.PostXML(sendRedUri, params, client)
+	rawRet, err := util.PostXML(refundUri, params, client)
 	if err != nil {
 		fmt.Println(err)
 		return err
