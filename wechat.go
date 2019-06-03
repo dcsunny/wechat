@@ -10,8 +10,10 @@ import (
 	"github.com/dcsunny/wechat/js"
 	"github.com/dcsunny/wechat/material"
 	"github.com/dcsunny/wechat/menu"
+	"github.com/dcsunny/wechat/miniprogram"
 	"github.com/dcsunny/wechat/oauth"
 	"github.com/dcsunny/wechat/pay"
+	"github.com/dcsunny/wechat/qr"
 	"github.com/dcsunny/wechat/server"
 	"github.com/dcsunny/wechat/template"
 	"github.com/dcsunny/wechat/user"
@@ -108,13 +110,13 @@ func (wc *Wechat) GetPay() *pay.Pay {
 }
 
 // 带参数二维码接口
-func (wc *Wechat) GetQrCode() *user.QrCode {
-	return user.NewQrCode(wc.Context)
+func (wc *Wechat) GetQrCode() *qr.QR {
+	return qr.NewQR(wc.Context)
 }
 
 //小程序二维码
-func (wc *Wechat) GetMiniQrCode() *user.MiniQrCode {
-	return user.NewMiniQrCode(wc.Context)
+func (wc *Wechat) GetMiniQrCode() *miniprogram.MiniProgram {
+	return miniprogram.NewMiniProgram(wc.Context)
 }
 
 //用户标签接口
