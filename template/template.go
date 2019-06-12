@@ -13,6 +13,7 @@ const (
 	templateSendURL          = "https://api.weixin.qq.com/cgi-bin/message/template/send"
 	templateSubscribeSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
 	templateMiniSendURL      = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
+	templateMiniOrMpSendURL  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
 )
 
 //Template 模板消息
@@ -108,6 +109,53 @@ func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
 		return
 	}
 	templateID = result.TemplateID
+	return
+}
+
+type MiniMpMessage struct {
+	ToUser           string           `json:"touser"`
+	WeappTemplateMsg WeappTemplateMsg `json:"weapp_template_msg"`
+	MpTemplateMsg    MpTemplateMsg    `json:"mp_template_msg"`
+}
+
+type WeappTemplateMsg struct {
+	TemplateID      string               `json:"template_id"`
+	Page            string               `json:"page"`
+	FormID          string               `json:"form_id"`
+	Data            map[string]*DataItem `json:"data"`
+	EmphasisKeyword string               `json:"emphasis_keyword"`
+}
+
+type MpTemplateMsg struct {
+	AppID       string `json:"appid"`
+	TemplateID  string `json:"template_id"`
+	Url         string `json:"url"`
+	Miniprogram struct {
+		Appid    string `json:"appid"`
+		Pagepath string `json:"pagepath"`
+	} `json:"miniprogram"`
+	Data map[string]*DataItem `json:"data"`
+}
+
+func (tpl *Template) SendMiniOrMp(msg *MiniMpMessage) (err error) {
+	var accessToken string
+	accessToken, err = tpl.GetAccessToken()
+	if err != nil {
+		return
+	}
+	uri := fmt.Sprintf("%s?access_token=%s", templateMiniOrMpSendURL, accessToken)
+	response, err := util.PostJSON(uri, msg)
+
+	var result resTemplateMiniSend
+	err = json.Unmarshal(response, &result)
+	if err != nil {
+		fmt.Println(fmt.Sprintf("body:%s", string(response)))
+		return
+	}
+	if result.ErrCode != 0 {
+		err = fmt.Errorf("template msg send error : errcode=%v , errmsg=%v", result.ErrCode, result.ErrMsg)
+		return
+	}
 	return
 }
 
