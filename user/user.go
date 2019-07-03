@@ -68,7 +68,7 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 	userInfo = Info{}
 	err = json.Unmarshal(response, &userInfo)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("get user info:%s", string(response)))
+		err = fmt.Errorf("get user info:%s", string(response))
 		return
 	}
 	if userInfo.ErrCode != 0 {
@@ -105,7 +105,7 @@ func (user *User) ListUserOpenIDs(nexOpenID string) (users ListResult, err error
 	users = ListResult{}
 	err = json.Unmarshal(response, &users)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("get user info:%s", string(response)))
+		err = fmt.Errorf("get user info:%s", string(response))
 		return
 	}
 	if users.ErrCode != 0 {

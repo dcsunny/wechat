@@ -101,7 +101,7 @@ func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
 	var result resTemplateMiniSend
 	err = json.Unmarshal(response, &result)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("body:%s", string(response)))
+		err = fmt.Errorf("body:%s", string(response))
 		return
 	}
 	if result.ErrCode != 0 {
@@ -149,7 +149,7 @@ func (tpl *Template) SendMiniOrMp(msg *MiniMpMessage) (err error) {
 	var result resTemplateMiniSend
 	err = json.Unmarshal(response, &result)
 	if err != nil {
-		fmt.Println(fmt.Sprintf("body:%s", string(response)))
+		err = fmt.Errorf("body:%s", string(response))
 		return
 	}
 	if result.ErrCode != 0 {
