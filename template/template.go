@@ -3,7 +3,6 @@ package template
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -74,7 +73,7 @@ func (tpl *Template) Send(msg *Message) (msgID int64, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateSendURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", tpl.ApiBaseUrl+templateSendURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	var result resTemplateSend
@@ -96,7 +95,7 @@ func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateMiniSendURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", tpl.ApiBaseUrl+templateMiniSendURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	var result resTemplateMiniSend
@@ -144,7 +143,7 @@ func (tpl *Template) SendMiniOrMp(msg *MiniMpMessage) (err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateMiniOrMpSendURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", tpl.ApiBaseUrl+templateMiniOrMpSendURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	var result resTemplateMiniSend
@@ -172,7 +171,7 @@ func (tpl *Template) SendSubscribeMessage(msg *SubscribeMessage) (err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateSubscribeSendURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", tpl.ApiBaseUrl+templateSubscribeSendURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
 	var result define.CommonError
 	err = json.Unmarshal(response, &result)

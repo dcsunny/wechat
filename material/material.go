@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -63,7 +62,7 @@ func (material *Material) AddNews(articles []*Article) (mediaID string, err erro
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(material.ApiBaseUrl, addNewsURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", material.ApiBaseUrl+addNewsURL, accessToken)
 	responseBytes, err := util.PostJSON(uri, req)
 	var res resArticles
 	err = json.Unmarshal(responseBytes, res)
@@ -93,7 +92,7 @@ func (material *Material) AddMaterial(mediaType MediaType, filename string) (med
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s&type=%s", path.Join(material.ApiBaseUrl, addMaterialURL), accessToken, mediaType)
+	uri := fmt.Sprintf("%s?access_token=%s&type=%s", material.ApiBaseUrl+addMaterialURL, accessToken, mediaType)
 	var response []byte
 	response, err = util.PostFile("media", filename, uri)
 	if err != nil {
@@ -126,7 +125,7 @@ func (material *Material) AddVideo(filename, title, introduction string) (mediaI
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s&type=video", path.Join(material.ApiBaseUrl, addMaterialURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s&type=video", material.ApiBaseUrl+addMaterialURL, accessToken)
 
 	videoDesc := &reqVideo{
 		Title:        title,
@@ -182,7 +181,7 @@ func (material *Material) DeleteMaterial(mediaID string) error {
 		return err
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(material.ApiBaseUrl, delMaterialURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", material.ApiBaseUrl+delMaterialURL, accessToken)
 	response, err := util.PostJSON(uri, reqDeleteMaterial{mediaID})
 	if err != nil {
 		return err

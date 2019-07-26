@@ -3,7 +3,6 @@ package context
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 	"time"
 
 	"github.com/dcsunny/wechat/define"
@@ -42,7 +41,7 @@ func (ctx *Context) SetComponentAccessToken(verifyTicket string) (*ComponentAcce
 		"component_appsecret":     ctx.AppSecret,
 		"component_verify_ticket": verifyTicket,
 	}
-	respBody, err := util.PostJSON(path.Join(ctx.ApiBaseUrl, componentAccessTokenURL), body)
+	respBody, err := util.PostJSON(ctx.ApiBaseUrl+componentAccessTokenURL, body)
 	if err != nil {
 		return nil, err
 	}
@@ -67,7 +66,7 @@ func (ctx *Context) GetPreCode() (string, error) {
 	req := map[string]string{
 		"component_appid": ctx.AppID,
 	}
-	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, getPreCodeURL), cat)
+	uri := fmt.Sprintf(ctx.ApiBaseUrl+getPreCodeURL, cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return "", err
@@ -118,7 +117,7 @@ func (ctx *Context) QueryAuthCode(authCode string) (*AuthBaseInfo, error) {
 		"component_appid":    ctx.AppID,
 		"authorization_code": authCode,
 	}
-	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, queryAuthURL), cat)
+	uri := fmt.Sprintf(ctx.ApiBaseUrl+queryAuthURL, cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return nil, err
@@ -147,7 +146,7 @@ func (ctx *Context) RefreshAuthrToken(appid, refreshToken string) (*AuthrAccessT
 		"authorizer_appid":         appid,
 		"authorizer_refresh_token": refreshToken,
 	}
-	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, refreshTokenURL), cat)
+	uri := fmt.Sprintf(ctx.ApiBaseUrl+refreshTokenURL, cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return nil, err
@@ -205,7 +204,7 @@ func (ctx *Context) GetAuthrInfo(appid string) (*AuthorizerInfo, *AuthBaseInfo, 
 		"authorizer_appid": appid,
 	}
 
-	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, getComponentInfoURL), cat)
+	uri := fmt.Sprintf(ctx.ApiBaseUrl+getComponentInfoURL, cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return nil, nil, err

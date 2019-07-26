@@ -3,7 +3,6 @@ package miniprogram
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
@@ -81,17 +80,17 @@ func (wxa *MiniProgram) getAnalysisRetain(urlStr string, beginDate, endDate stri
 
 // GetAnalysisDailyRetain 获取用户访问小程序日留存
 func (wxa *MiniProgram) GetAnalysisDailyRetain(beginDate, endDate string) (result ResAnalysisRetain, err error) {
-	return wxa.getAnalysisRetain(path.Join(wxa.ApiBaseUrl, getAnalysisDailyRetainURL), beginDate, endDate)
+	return wxa.getAnalysisRetain(wxa.ApiBaseUrl+getAnalysisDailyRetainURL, beginDate, endDate)
 }
 
 // GetAnalysisMonthlyRetain 获取用户访问小程序月留存
 func (wxa *MiniProgram) GetAnalysisMonthlyRetain(beginDate, endDate string) (result ResAnalysisRetain, err error) {
-	return wxa.getAnalysisRetain(path.Join(wxa.ApiBaseUrl, getAnalysisMonthlyRetainURL), beginDate, endDate)
+	return wxa.getAnalysisRetain(wxa.ApiBaseUrl+getAnalysisMonthlyRetainURL, beginDate, endDate)
 }
 
 // GetAnalysisWeeklyRetain 获取用户访问小程序周留存
 func (wxa *MiniProgram) GetAnalysisWeeklyRetain(beginDate, endDate string) (result ResAnalysisRetain, err error) {
-	return wxa.getAnalysisRetain(path.Join(wxa.ApiBaseUrl, getAnalysisWeeklyRetainURL), beginDate, endDate)
+	return wxa.getAnalysisRetain(wxa.ApiBaseUrl+getAnalysisWeeklyRetainURL, beginDate, endDate)
 }
 
 // ResAnalysisDailySummary 小程序访问数据概况
@@ -111,7 +110,7 @@ func (wxa *MiniProgram) GetAnalysisDailySummary(beginDate, endDate string) (resu
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisDailySummaryURL), body)
+	response, err := wxa.fetchData(wxa.ApiBaseUrl+getAnalysisDailySummaryURL, body)
 	if err != nil {
 		return
 	}
@@ -165,17 +164,17 @@ func (wxa *MiniProgram) getAnalysisVisitTrend(urlStr string, beginDate, endDate 
 
 // GetAnalysisDailyVisitTrend 获取用户访问小程序数据日趋势
 func (wxa *MiniProgram) GetAnalysisDailyVisitTrend(beginDate, endDate string) (result ResAnalysisVisitTrend, err error) {
-	return wxa.getAnalysisVisitTrend(path.Join(wxa.ApiBaseUrl, getAnalysisDailyVisitTrendURL), beginDate, endDate)
+	return wxa.getAnalysisVisitTrend(wxa.ApiBaseUrl+getAnalysisDailyVisitTrendURL, beginDate, endDate)
 }
 
 // GetAnalysisMonthlyVisitTrend 获取用户访问小程序数据月趋势
 func (wxa *MiniProgram) GetAnalysisMonthlyVisitTrend(beginDate, endDate string) (result ResAnalysisVisitTrend, err error) {
-	return wxa.getAnalysisVisitTrend(path.Join(wxa.ApiBaseUrl, getAnalysisMonthlyVisitTrendURL), beginDate, endDate)
+	return wxa.getAnalysisVisitTrend(wxa.ApiBaseUrl+getAnalysisMonthlyVisitTrendURL, beginDate, endDate)
 }
 
 // GetAnalysisWeeklyVisitTrend 获取用户访问小程序数据周趋势
 func (wxa *MiniProgram) GetAnalysisWeeklyVisitTrend(beginDate, endDate string) (result ResAnalysisVisitTrend, err error) {
-	return wxa.getAnalysisVisitTrend(path.Join(wxa.ApiBaseUrl, getAnalysisWeeklyVisitTrendURL), beginDate, endDate)
+	return wxa.getAnalysisVisitTrend(wxa.ApiBaseUrl+getAnalysisWeeklyVisitTrendURL, beginDate, endDate)
 }
 
 // UserPortraitItem 用户画像项目
@@ -210,7 +209,7 @@ func (wxa *MiniProgram) GetAnalysisUserPortrait(beginDate, endDate string) (resu
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisUserPortraitURL), body)
+	response, err := wxa.fetchData(wxa.ApiBaseUrl+getAnalysisUserPortraitURL, body)
 	if err != nil {
 		return
 	}
@@ -251,7 +250,7 @@ func (wxa *MiniProgram) GetAnalysisVisitDistribution(beginDate, endDate string) 
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisVisitDistributionURL), body)
+	response, err := wxa.fetchData(wxa.ApiBaseUrl+getAnalysisVisitDistributionURL, body)
 	if err != nil {
 		return
 	}
@@ -291,7 +290,7 @@ func (wxa *MiniProgram) GetAnalysisVisitPage(beginDate, endDate string) (result 
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisVisitPageURL), body)
+	response, err := wxa.fetchData(wxa.ApiBaseUrl+getAnalysisVisitPageURL, body)
 	if err != nil {
 		return
 	}

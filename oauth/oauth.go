@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -37,13 +36,13 @@ func NewOauth(context *context.Context) *Oauth {
 func (oauth *Oauth) GetRedirectURL(redirectURI, scope, state string) (string, error) {
 	//url encode
 	urlStr := url.QueryEscape(redirectURI)
-	return fmt.Sprintf(path.Join(oauth.ApiBaseUrl, redirectOauthURL), oauth.AppID, urlStr, scope, state), nil
+	return fmt.Sprintf(oauth.ApiBaseUrl+redirectOauthURL, oauth.AppID, urlStr, scope, state), nil
 }
 
 //GetWebAppRedirectURL 获取网页应用跳转的url地址
 func (oauth *Oauth) GetWebAppRedirectURL(redirectURI, scope, state string) (string, error) {
 	urlStr := url.QueryEscape(redirectURI)
-	return fmt.Sprintf(path.Join(oauth.ApiBaseUrl, webAppRedirectOauthURL), oauth.AppID, urlStr, scope, state), nil
+	return fmt.Sprintf(oauth.ApiBaseUrl+webAppRedirectOauthURL, oauth.AppID, urlStr, scope, state), nil
 }
 
 //Redirect 跳转到网页授权
@@ -73,7 +72,7 @@ type ResAccessToken struct {
 
 // GetUserAccessToken 通过网页授权的code 换取access_token(区别于context中的access_token)
 func (oauth *Oauth) GetUserAccessToken(code string) (result ResAccessToken, err error) {
-	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, accessTokenURL), oauth.AppID, oauth.AppSecret, code)
+	urlStr := fmt.Sprintf(oauth.ApiBaseUrl+accessTokenURL, oauth.AppID, oauth.AppSecret, code)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -92,7 +91,7 @@ func (oauth *Oauth) GetUserAccessToken(code string) (result ResAccessToken, err 
 
 //RefreshAccessToken 刷新access_token
 func (oauth *Oauth) RefreshAccessToken(refreshToken string) (result ResAccessToken, err error) {
-	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, refreshAccessTokenURL), oauth.AppID, refreshToken)
+	urlStr := fmt.Sprintf(oauth.ApiBaseUrl+refreshAccessTokenURL, oauth.AppID, refreshToken)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -111,7 +110,7 @@ func (oauth *Oauth) RefreshAccessToken(refreshToken string) (result ResAccessTok
 
 //CheckAccessToken 检验access_token是否有效
 func (oauth *Oauth) CheckAccessToken(accessToken, openID string) (b bool, err error) {
-	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, checkAccessTokenURL), accessToken, openID)
+	urlStr := fmt.Sprintf(oauth.ApiBaseUrl+checkAccessTokenURL, accessToken, openID)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -147,7 +146,7 @@ type UserInfo struct {
 
 //GetUserInfo 如果scope为 snsapi_userinfo 则可以通过此方法获取到用户基本信息
 func (oauth *Oauth) GetUserInfo(accessToken, openID string) (result UserInfo, err error) {
-	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, userInfoURL), accessToken, openID)
+	urlStr := fmt.Sprintf(oauth.ApiBaseUrl+userInfoURL, accessToken, openID)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {

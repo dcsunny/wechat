@@ -3,7 +3,6 @@ package menu
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -128,7 +127,7 @@ func (menu *Menu) SetMenu(buttons []*Button) error {
 		return err
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(menu.ApiBaseUrl, menuCreateURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", menu.ApiBaseUrl+menuCreateURL, accessToken)
 	reqMenu := &reqMenu{
 		Button: buttons,
 	}
@@ -147,7 +146,7 @@ func (menu *Menu) GetMenu() (resMenu ResMenu, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(menu.ApiBaseUrl, menuGetURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", menu.ApiBaseUrl+menuGetURL, accessToken)
 	var response []byte
 	response, err = util.HTTPGet(uri)
 	if err != nil {
@@ -170,7 +169,7 @@ func (menu *Menu) DeleteMenu() error {
 	if err != nil {
 		return err
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(menu.ApiBaseUrl, menuDeleteURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", menu.ApiBaseUrl+menuDeleteURL, accessToken)
 	response, err := util.HTTPGet(uri)
 	if err != nil {
 		return err
@@ -185,7 +184,7 @@ func (menu *Menu) AddConditional(buttons []*Button, matchRule *MatchRule) error 
 		return err
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(menu.ApiBaseUrl, menuAddConditionalURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", menu.ApiBaseUrl+menuAddConditionalURL, accessToken)
 	reqMenu := &reqMenu{
 		Button:    buttons,
 		MatchRule: matchRule,
@@ -205,7 +204,7 @@ func (menu *Menu) DeleteConditional(menuID int64) error {
 		return err
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(menu.ApiBaseUrl, menuDeleteConditionalURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", menu.ApiBaseUrl+menuDeleteConditionalURL, accessToken)
 	reqDeleteConditional := &reqDeleteConditional{
 		MenuID: menuID,
 	}
@@ -224,7 +223,7 @@ func (menu *Menu) MenuTryMatch(userID string) (buttons []Button, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(menu.ApiBaseUrl, menuTryMatchURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", menu.ApiBaseUrl+menuTryMatchURL, accessToken)
 	reqMenuTryMatch := &reqMenuTryMatch{userID}
 	var response []byte
 	response, err = util.PostJSON(uri, reqMenuTryMatch)
@@ -251,7 +250,7 @@ func (menu *Menu) GetCurrentSelfMenuInfo() (resSelfMenuInfo ResSelfMenuInfo, err
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(menu.ApiBaseUrl, menuSelfMenuInfoURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", menu.ApiBaseUrl+menuSelfMenuInfoURL, accessToken)
 	var response []byte
 	response, err = util.HTTPGet(uri)
 	if err != nil {

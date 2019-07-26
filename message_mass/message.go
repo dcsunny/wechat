@@ -3,7 +3,6 @@ package message_mass
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -69,7 +68,7 @@ func (service *MessageMass) Send(msg *MessageByOpen) (result MessageSassResult, 
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(path.Join(service.ApiBaseUrl, MessageMassSendByOpenIdURL), accessToken)
+	uri := fmt.Sprintf(service.ApiBaseUrl+MessageMassSendByOpenIdURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	err = json.Unmarshal(response, &result)
@@ -99,7 +98,7 @@ func (service *MessageMass) SendByTag(msg *MessageByTag) (result MessageSassResu
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(path.Join(service.ApiBaseUrl, MessageMassSendByTagURL), accessToken)
+	uri := fmt.Sprintf(service.ApiBaseUrl+MessageMassSendByTagURL, accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	err = json.Unmarshal(response, &result)

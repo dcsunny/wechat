@@ -3,7 +3,6 @@ package material
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
@@ -47,7 +46,7 @@ func (material *Material) MediaUpload(mediaType MediaType, filename string) (med
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s&type=%s", path.Join(material.ApiBaseUrl, mediaUploadURL), accessToken, mediaType)
+	uri := fmt.Sprintf("%s?access_token=%s&type=%s", material.ApiBaseUrl+mediaUploadURL, accessToken, mediaType)
 	var response []byte
 	response, err = util.PostFile("media", filename, uri)
 	if err != nil {
@@ -72,7 +71,7 @@ func (material *Material) GetMediaURL(mediaID string) (mediaURL string, err erro
 	if err != nil {
 		return
 	}
-	mediaURL = fmt.Sprintf("%s?access_token=%s&media_id=%s", path.Join(material.ApiBaseUrl, mediaGetURL), accessToken, mediaID)
+	mediaURL = fmt.Sprintf("%s?access_token=%s&media_id=%s", material.ApiBaseUrl+mediaGetURL, accessToken, mediaID)
 	return
 }
 
@@ -91,7 +90,7 @@ func (material *Material) ImageUpload(filename string) (url string, err error) {
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(material.ApiBaseUrl, mediaUploadImageURL), accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", material.ApiBaseUrl+mediaUploadImageURL, accessToken)
 	var response []byte
 	response, err = util.PostFile("media", filename, uri)
 	if err != nil {

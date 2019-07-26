@@ -3,7 +3,6 @@ package user
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -60,7 +59,7 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 		return
 	}
 
-	uri := fmt.Sprintf(path.Join(user.ApiBaseUrl, userInfoURL), accessToken, openID)
+	uri := fmt.Sprintf(user.ApiBaseUrl+userInfoURL, accessToken, openID)
 	var response []byte
 	response, err = util.HTTPGet(uri)
 	if err != nil {
@@ -96,7 +95,7 @@ func (user *User) ListUserOpenIDs(nexOpenID string) (users ListResult, err error
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s&next_openid=%s", path.Join(user.ApiBaseUrl, userListURL), accessToken, nexOpenID)
+	uri := fmt.Sprintf("%s?access_token=%s&next_openid=%s", user.ApiBaseUrl+userListURL, accessToken, nexOpenID)
 	var response []byte
 	response, err = util.HTTPGet(uri)
 	if err != nil {
@@ -141,7 +140,7 @@ func (user *User) UpdateRemark(openID, remark string) (err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(path.Join(user.ApiBaseUrl, updateRemarkURL), accessToken)
+	uri := fmt.Sprintf(user.ApiBaseUrl+updateRemarkURL, accessToken)
 	var response []byte
 	response, err = util.PostJSON(uri, map[string]string{"openid": openID, "remark": remark})
 	if err != nil {

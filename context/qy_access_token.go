@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"path"
 	"sync"
 	"time"
 
@@ -56,7 +55,7 @@ func (ctx *Context) GetQyAccessToken() (accessToken string, err error) {
 //GetQyAccessTokenFromServer 强制从微信服务器获取token
 func (ctx *Context) GetQyAccessTokenFromServer() (resQyAccessToken ResQyAccessToken, err error) {
 	log.Printf("GetQyAccessTokenFromServer")
-	url := fmt.Sprintf(path.Join(ctx.QyApiBaseUrl, qyAccessTokenURL), ctx.AppID, ctx.AppSecret)
+	url := fmt.Sprintf(ctx.QyApiBaseUrl+qyAccessTokenURL, ctx.AppID, ctx.AppSecret)
 	var body []byte
 	body, err = util.HTTPGet(url)
 	if err != nil {

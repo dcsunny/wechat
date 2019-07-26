@@ -40,7 +40,7 @@ func (oauth *Oauth) GetQyUserInfoByCode(code string) (result QyUserInfo, err err
 		err = e
 		return
 	}
-	urlStr := fmt.Sprintf(path.Join(oauth.QyApiBaseUrl, qyUserInfoURL), qyAccessToken, code)
+	urlStr := fmt.Sprintf(oauth.QyApiBaseUrl+qyUserInfoURL, qyAccessToken, code)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -77,7 +77,7 @@ func (oauth *Oauth) GetQyUserDetailUserTicket(userTicket string) (result QyUserD
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", path.Join(oauth.QyApiBaseUrl, qyUserDetailURL), qyAccessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", oauth.QyApiBaseUrl+qyUserDetailURL, qyAccessToken)
 	var response []byte
 	response, err = util.PostJSON(uri, map[string]string{
 		"user_ticket": userTicket,

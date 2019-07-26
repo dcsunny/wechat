@@ -3,7 +3,6 @@ package miniprogram
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 	"strings"
 
 	"github.com/dcsunny/wechat/define"
@@ -77,17 +76,17 @@ func (wxa *MiniProgram) fetchCode(urlStr string, body interface{}) (response []b
 // CreateWXAQRCode 获取小程序二维码，适用于需要的码数量较少的业务场景
 // 文档地址： https://developers.weixin.qq.com/miniprogram/dev/api/createWXAQRCode.html
 func (wxa *MiniProgram) CreateWXAQRCode(coderParams QRCoder) (response []byte, err error) {
-	return wxa.fetchCode(path.Join(wxa.ApiBaseUrl, createWXAQRCodeURL), coderParams)
+	return wxa.fetchCode(wxa.ApiBaseUrl+createWXAQRCodeURL, coderParams)
 }
 
 // GetWXACode 获取小程序码，适用于需要的码数量较少的业务场景
 // 文档地址： https://developers.weixin.qq.com/miniprogram/dev/api/getWXACode.html
 func (wxa *MiniProgram) GetWXACode(coderParams QRCoder) (response []byte, err error) {
-	return wxa.fetchCode(path.Join(wxa.ApiBaseUrl, getWXACodeURL), coderParams)
+	return wxa.fetchCode(wxa.ApiBaseUrl+getWXACodeURL, coderParams)
 }
 
 // GetWXACodeUnlimit 获取小程序码，适用于需要的码数量极多的业务场景
 // 文档地址： https://developers.weixin.qq.com/miniprogram/dev/api/getWXACodeUnlimit.html
 func (wxa *MiniProgram) GetWXACodeUnlimit(coderParams QRCoder) (response []byte, err error) {
-	return wxa.fetchCode(path.Join(wxa.ApiBaseUrl, getWXACodeUnlimitURL), coderParams)
+	return wxa.fetchCode(wxa.ApiBaseUrl+getWXACodeUnlimitURL, coderParams)
 }

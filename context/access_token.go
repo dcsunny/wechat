@@ -3,7 +3,6 @@ package context
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 	"sync"
 	"time"
 
@@ -62,7 +61,7 @@ func (ctx *Context) GetAccessToken() (accessToken string, err error) {
 
 //GetAccessTokenFromServer 强制从微信服务器获取token
 func (ctx *Context) GetAccessTokenFromServer() (resAccessToken ResAccessToken, err error) {
-	accessTokenUrl := path.Join(ctx.ApiBaseUrl, AccessTokenURL)
+	accessTokenUrl := ctx.ApiBaseUrl + AccessTokenURL
 	if ctx.AccessTokenURL != "" {
 		accessTokenUrl = ctx.AccessTokenURL
 	}

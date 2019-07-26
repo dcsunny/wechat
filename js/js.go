@@ -3,7 +3,6 @@ package js
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 	"time"
 
 	"github.com/dcsunny/wechat/context"
@@ -93,7 +92,7 @@ func (js *Js) getTicketFromServer() (ticket resTicket, err error) {
 	}
 
 	var response []byte
-	url := fmt.Sprintf(path.Join(js.ApiBaseUrl, getTicketURL), accessToken)
+	url := fmt.Sprintf(js.ApiBaseUrl+getTicketURL, accessToken)
 	response, err = util.HTTPGet(url)
 	err = json.Unmarshal(response, &ticket)
 	if err != nil {

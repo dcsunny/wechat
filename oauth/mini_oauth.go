@@ -3,7 +3,6 @@ package oauth
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
@@ -21,7 +20,7 @@ const (
 )
 
 func (oauth *Oauth) Jscode2Session(code string) (session MiniSession, err error) {
-	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, Jscode2SessionURL), oauth.AppID, oauth.AppSecret, code)
+	urlStr := fmt.Sprintf(oauth.ApiBaseUrl+Jscode2SessionURL, oauth.AppID, oauth.AppSecret, code)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {

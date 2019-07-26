@@ -3,7 +3,6 @@ package miniprogram
 import (
 	"encoding/json"
 	"fmt"
-	"path"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
@@ -24,7 +23,7 @@ type ResCode2Session struct {
 
 // Code2Session 登录凭证校验
 func (wxa *MiniProgram) Code2Session(jsCode string) (result ResCode2Session, err error) {
-	urlStr := fmt.Sprintf(path.Join(wxa.ApiBaseUrl, code2SessionURL), wxa.AppID, wxa.AppSecret, jsCode)
+	urlStr := fmt.Sprintf(wxa.ApiBaseUrl+code2SessionURL, wxa.AppID, wxa.AppSecret, jsCode)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
