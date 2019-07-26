@@ -3,6 +3,7 @@ package context
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 	"time"
 
 	"github.com/dcsunny/wechat/define"
@@ -10,12 +11,12 @@ import (
 )
 
 const (
-	componentAccessTokenURL = "https://api.weixin.qq.com/cgi-bin/component/api_component_token"
-	getPreCodeURL           = "https://api.weixin.qq.com/cgi-bin/component/api_create_preauthcode?component_access_token=%s"
-	queryAuthURL            = "https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=%s"
-	refreshTokenURL         = "https://api.weixin.qq.com/cgi-bin/component/api_authorizer_token?component_access_token=%s"
-	getComponentInfoURL     = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?component_access_token=%s"
-	getComponentConfigURL   = "https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_option?component_access_token=%s"
+	componentAccessTokenURL = "/cgi-bin/component/api_component_token"
+	getPreCodeURL           = "/cgi-bin/component/api_create_preauthcode?component_access_token=%s"
+	queryAuthURL            = "/cgi-bin/component/api_query_auth?component_access_token=%s"
+	refreshTokenURL         = "/cgi-bin/component/api_authorizer_token?component_access_token=%s"
+	getComponentInfoURL     = "/cgi-bin/component/api_get_authorizer_info?component_access_token=%s"
+	getComponentConfigURL   = "/cgi-bin/component/api_get_authorizer_option?component_access_token=%s"
 )
 
 // ComponentAccessToken 第三方平台
@@ -41,7 +42,7 @@ func (ctx *Context) SetComponentAccessToken(verifyTicket string) (*ComponentAcce
 		"component_appsecret":     ctx.AppSecret,
 		"component_verify_ticket": verifyTicket,
 	}
-	respBody, err := util.PostJSON(componentAccessTokenURL, body)
+	respBody, err := util.PostJSON(path.Join(ctx.ApiBaseUrl, componentAccessTokenURL), body)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +67,7 @@ func (ctx *Context) GetPreCode() (string, error) {
 	req := map[string]string{
 		"component_appid": ctx.AppID,
 	}
-	uri := fmt.Sprintf(getPreCodeURL, cat)
+	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, getPreCodeURL), cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return "", err
@@ -117,7 +118,7 @@ func (ctx *Context) QueryAuthCode(authCode string) (*AuthBaseInfo, error) {
 		"component_appid":    ctx.AppID,
 		"authorization_code": authCode,
 	}
-	uri := fmt.Sprintf(queryAuthURL, cat)
+	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, queryAuthURL), cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return nil, err
@@ -146,7 +147,7 @@ func (ctx *Context) RefreshAuthrToken(appid, refreshToken string) (*AuthrAccessT
 		"authorizer_appid":         appid,
 		"authorizer_refresh_token": refreshToken,
 	}
-	uri := fmt.Sprintf(refreshTokenURL, cat)
+	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, refreshTokenURL), cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return nil, err
@@ -204,7 +205,7 @@ func (ctx *Context) GetAuthrInfo(appid string) (*AuthorizerInfo, *AuthBaseInfo, 
 		"authorizer_appid": appid,
 	}
 
-	uri := fmt.Sprintf(getComponentInfoURL, cat)
+	uri := fmt.Sprintf(path.Join(ctx.ApiBaseUrl, getComponentInfoURL), cat)
 	body, err := util.PostJSON(uri, req)
 	if err != nil {
 		return nil, nil, err

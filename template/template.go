@@ -3,6 +3,7 @@ package template
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -10,10 +11,10 @@ import (
 )
 
 const (
-	templateSendURL          = "https://api.weixin.qq.com/cgi-bin/message/template/send"
-	templateSubscribeSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
-	templateMiniSendURL      = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
-	templateMiniOrMpSendURL  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
+	templateSendURL          = "/cgi-bin/message/template/send"
+	templateSubscribeSendURL = "/cgi-bin/message/template/subscribe"
+	templateMiniSendURL      = "/cgi-bin/message/wxopen/template/send"
+	templateMiniOrMpSendURL  = "/cgi-bin/message/wxopen/template/uniform_send"
 )
 
 //Template 模板消息
@@ -73,7 +74,7 @@ func (tpl *Template) Send(msg *Message) (msgID int64, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", templateSendURL, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateSendURL), accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	var result resTemplateSend
@@ -95,7 +96,7 @@ func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", templateMiniSendURL, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateMiniSendURL), accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	var result resTemplateMiniSend
@@ -143,7 +144,7 @@ func (tpl *Template) SendMiniOrMp(msg *MiniMpMessage) (err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", templateMiniOrMpSendURL, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateMiniOrMpSendURL), accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	var result resTemplateMiniSend
@@ -171,7 +172,7 @@ func (tpl *Template) SendSubscribeMessage(msg *SubscribeMessage) (err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", templateSubscribeSendURL, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, templateSubscribeSendURL), accessToken)
 	response, err := util.PostJSON(uri, msg)
 	var result define.CommonError
 	err = json.Unmarshal(response, &result)

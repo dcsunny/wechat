@@ -3,6 +3,7 @@ package js
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 	"time"
 
 	"github.com/dcsunny/wechat/context"
@@ -10,7 +11,7 @@ import (
 	"github.com/dcsunny/wechat/util"
 )
 
-const getTicketURL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi"
+const getTicketURL = "/cgi-bin/ticket/getticket?access_token=%s&type=jsapi"
 
 // Js struct
 type Js struct {
@@ -92,7 +93,7 @@ func (js *Js) getTicketFromServer() (ticket resTicket, err error) {
 	}
 
 	var response []byte
-	url := fmt.Sprintf(getTicketURL, accessToken)
+	url := fmt.Sprintf(path.Join(js.ApiBaseUrl, getTicketURL), accessToken)
 	response, err = util.HTTPGet(url)
 	err = json.Unmarshal(response, &ticket)
 	if err != nil {

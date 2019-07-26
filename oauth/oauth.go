@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -12,12 +13,12 @@ import (
 )
 
 const (
-	redirectOauthURL       = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect"
-	webAppRedirectOauthURL = "https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect"
-	accessTokenURL         = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code"
-	refreshAccessTokenURL  = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"
-	userInfoURL            = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN"
-	checkAccessTokenURL    = "https://api.weixin.qq.com/sns/auth?access_token=%s&openid=%s"
+	redirectOauthURL       = "/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect"
+	webAppRedirectOauthURL = "/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect"
+	accessTokenURL         = "/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code"
+	refreshAccessTokenURL  = "/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s"
+	userInfoURL            = "/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN"
+	checkAccessTokenURL    = "/sns/auth?access_token=%s&openid=%s"
 )
 
 //Oauth 保存用户授权信息
@@ -36,13 +37,13 @@ func NewOauth(context *context.Context) *Oauth {
 func (oauth *Oauth) GetRedirectURL(redirectURI, scope, state string) (string, error) {
 	//url encode
 	urlStr := url.QueryEscape(redirectURI)
-	return fmt.Sprintf(redirectOauthURL, oauth.AppID, urlStr, scope, state), nil
+	return fmt.Sprintf(path.Join(oauth.ApiBaseUrl, redirectOauthURL), oauth.AppID, urlStr, scope, state), nil
 }
 
 //GetWebAppRedirectURL 获取网页应用跳转的url地址
 func (oauth *Oauth) GetWebAppRedirectURL(redirectURI, scope, state string) (string, error) {
 	urlStr := url.QueryEscape(redirectURI)
-	return fmt.Sprintf(webAppRedirectOauthURL, oauth.AppID, urlStr, scope, state), nil
+	return fmt.Sprintf(path.Join(oauth.ApiBaseUrl, webAppRedirectOauthURL), oauth.AppID, urlStr, scope, state), nil
 }
 
 //Redirect 跳转到网页授权
@@ -72,7 +73,7 @@ type ResAccessToken struct {
 
 // GetUserAccessToken 通过网页授权的code 换取access_token(区别于context中的access_token)
 func (oauth *Oauth) GetUserAccessToken(code string) (result ResAccessToken, err error) {
-	urlStr := fmt.Sprintf(accessTokenURL, oauth.AppID, oauth.AppSecret, code)
+	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, accessTokenURL), oauth.AppID, oauth.AppSecret, code)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -91,7 +92,7 @@ func (oauth *Oauth) GetUserAccessToken(code string) (result ResAccessToken, err 
 
 //RefreshAccessToken 刷新access_token
 func (oauth *Oauth) RefreshAccessToken(refreshToken string) (result ResAccessToken, err error) {
-	urlStr := fmt.Sprintf(refreshAccessTokenURL, oauth.AppID, refreshToken)
+	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, refreshAccessTokenURL), oauth.AppID, refreshToken)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -110,7 +111,7 @@ func (oauth *Oauth) RefreshAccessToken(refreshToken string) (result ResAccessTok
 
 //CheckAccessToken 检验access_token是否有效
 func (oauth *Oauth) CheckAccessToken(accessToken, openID string) (b bool, err error) {
-	urlStr := fmt.Sprintf(checkAccessTokenURL, accessToken, openID)
+	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, checkAccessTokenURL), accessToken, openID)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -146,7 +147,7 @@ type UserInfo struct {
 
 //GetUserInfo 如果scope为 snsapi_userinfo 则可以通过此方法获取到用户基本信息
 func (oauth *Oauth) GetUserInfo(accessToken, openID string) (result UserInfo, err error) {
-	urlStr := fmt.Sprintf(userInfoURL, accessToken, openID)
+	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, userInfoURL), accessToken, openID)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {

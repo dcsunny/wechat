@@ -26,6 +26,8 @@ type Wechat struct {
 
 // Config for user
 type Config struct {
+	ApiBaseUrl      string
+	QyApiBaseUrl    string
 	AppID           string
 	AppSecret       string
 	Token           string
@@ -47,6 +49,12 @@ func NewWechat(cfg *Config) *Wechat {
 }
 
 func copyConfigToContext(cfg *Config, context *context.Context) {
+	if cfg.ApiBaseUrl == "" {
+		cfg.ApiBaseUrl = "https://api.weixin.qq.com"
+	}
+	if cfg.QyApiBaseUrl == "" {
+		cfg.QyApiBaseUrl = "https://qyapi.weixin.qq.com"
+	}
 	context.AppID = cfg.AppID
 	context.AppSecret = cfg.AppSecret
 	context.Token = cfg.Token
@@ -58,6 +66,8 @@ func copyConfigToContext(cfg *Config, context *context.Context) {
 	context.PayKeyPEMBlock = cfg.PayKeyPEMBlock
 	context.Cache = cfg.Cache
 	context.AccessTokenURL = cfg.AccessTokenURL
+	context.ApiBaseUrl = cfg.ApiBaseUrl
+	context.QyApiBaseUrl = cfg.QyApiBaseUrl
 	context.SetAccessTokenLock(new(sync.RWMutex))
 	context.SetJsAPITicketLock(new(sync.RWMutex))
 }

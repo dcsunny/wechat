@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -12,9 +13,9 @@ import (
 )
 
 const (
-	addNewsURL     = "https://api.weixin.qq.com/cgi-bin/material/add_news"
-	addMaterialURL = "https://api.weixin.qq.com/cgi-bin/material/add_material"
-	delMaterialURL = "https://api.weixin.qq.com/cgi-bin/material/del_material"
+	addNewsURL     = "/cgi-bin/material/add_news"
+	addMaterialURL = "/cgi-bin/material/add_material"
+	delMaterialURL = "/cgi-bin/material/del_material"
 )
 
 //Material 素材管理
@@ -62,7 +63,7 @@ func (material *Material) AddNews(articles []*Article) (mediaID string, err erro
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", addNewsURL, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(material.ApiBaseUrl, addNewsURL), accessToken)
 	responseBytes, err := util.PostJSON(uri, req)
 	var res resArticles
 	err = json.Unmarshal(responseBytes, res)
@@ -92,7 +93,7 @@ func (material *Material) AddMaterial(mediaType MediaType, filename string) (med
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s&type=%s", addMaterialURL, accessToken, mediaType)
+	uri := fmt.Sprintf("%s?access_token=%s&type=%s", path.Join(material.ApiBaseUrl, addMaterialURL), accessToken, mediaType)
 	var response []byte
 	response, err = util.PostFile("media", filename, uri)
 	if err != nil {
@@ -125,7 +126,7 @@ func (material *Material) AddVideo(filename, title, introduction string) (mediaI
 		return
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s&type=video", addMaterialURL, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s&type=video", path.Join(material.ApiBaseUrl, addMaterialURL), accessToken)
 
 	videoDesc := &reqVideo{
 		Title:        title,
@@ -181,7 +182,7 @@ func (material *Material) DeleteMaterial(mediaID string) error {
 		return err
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", delMaterialURL, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(material.ApiBaseUrl, delMaterialURL), accessToken)
 	response, err := util.PostJSON(uri, reqDeleteMaterial{mediaID})
 	if err != nil {
 		return err

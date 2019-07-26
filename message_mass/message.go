@@ -3,6 +3,7 @@ package message_mass
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -10,8 +11,8 @@ import (
 )
 
 const (
-	MessageMassSendByOpenIdURL = "https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s"
-	MessageMassSendByTagURL    = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s"
+	MessageMassSendByOpenIdURL = "/cgi-bin/message/mass/send?access_token=%s"
+	MessageMassSendByTagURL    = "/cgi-bin/message/mass/sendall?access_token=%s"
 )
 
 type MessageMass struct {
@@ -68,7 +69,7 @@ func (service *MessageMass) Send(msg *MessageByOpen) (result MessageSassResult, 
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(MessageMassSendByOpenIdURL, accessToken)
+	uri := fmt.Sprintf(path.Join(service.ApiBaseUrl, MessageMassSendByOpenIdURL), accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	err = json.Unmarshal(response, &result)
@@ -98,7 +99,7 @@ func (service *MessageMass) SendByTag(msg *MessageByTag) (result MessageSassResu
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(MessageMassSendByTagURL, accessToken)
+	uri := fmt.Sprintf(path.Join(service.ApiBaseUrl, MessageMassSendByTagURL), accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	err = json.Unmarshal(response, &result)

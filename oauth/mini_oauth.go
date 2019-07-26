@@ -3,6 +3,7 @@ package oauth
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
@@ -16,11 +17,11 @@ type MiniSession struct {
 }
 
 const (
-	Jscode2SessionURL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+	Jscode2SessionURL = "/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
 )
 
 func (oauth *Oauth) Jscode2Session(code string) (session MiniSession, err error) {
-	urlStr := fmt.Sprintf(Jscode2SessionURL, oauth.AppID, oauth.AppSecret, code)
+	urlStr := fmt.Sprintf(path.Join(oauth.ApiBaseUrl, Jscode2SessionURL), oauth.AppID, oauth.AppSecret, code)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {

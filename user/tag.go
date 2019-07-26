@@ -2,6 +2,7 @@ package user
 
 import (
 	"fmt"
+	"path"
 
 	"encoding/json"
 
@@ -16,8 +17,8 @@ type Tag struct {
 }
 
 const (
-	createTagURL     = "https://api.weixin.qq.com/cgi-bin/tags/create?access_token=%s"
-	updateUserTagURL = "https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging?access_token=%s"
+	createTagURL     = "/cgi-bin/tags/create?access_token=%s"
+	updateUserTagURL = "/cgi-bin/tags/members/batchtagging?access_token=%s"
 )
 
 func NewTag(context *context.Context) *Tag {
@@ -40,7 +41,7 @@ func (tag *Tag) CreateTag(name string) (tagInfo TagInfo, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(createTagURL, accessToken)
+	uri := fmt.Sprintf(path.Join(tag.ApiBaseUrl, createTagURL), accessToken)
 	var response []byte
 	response, err = util.PostJSON(uri, map[string]map[string]string{"tag": map[string]string{"name": name}})
 	if err != nil {
@@ -64,7 +65,7 @@ func (tag *Tag) UpdateUserTag(openIDs []string, tagID int) (err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(updateUserTagURL, accessToken)
+	uri := fmt.Sprintf(path.Join(tag.ApiBaseUrl, updateUserTagURL), accessToken)
 	var response []byte
 	response, err = util.PostJSON(uri, map[string]interface{}{"openid_list": openIDs, "tagid": tagID})
 	if err != nil {

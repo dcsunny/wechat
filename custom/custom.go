@@ -3,6 +3,7 @@ package custom
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -10,7 +11,7 @@ import (
 )
 
 const (
-	customUrl                 = "https://api.weixin.qq.com/cgi-bin/message/custom/send"
+	customUrl                 = "/cgi-bin/message/custom/send"
 	CustomTypeText            = "text"
 	CustomTypeImage           = "image"
 	CustomTypeNews            = "news"
@@ -90,7 +91,7 @@ func (tpl *Custom) Send(msg *Message) (result define.CommonError, err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", customUrl, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(tpl.ApiBaseUrl, customUrl), accessToken)
 	response, err := util.PostJSON(uri, msg)
 
 	err = json.Unmarshal(response, &result)

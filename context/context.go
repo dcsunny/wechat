@@ -9,6 +9,8 @@ import (
 
 // Context struct
 type Context struct {
+	ApiBaseUrl      string
+	QyApiBaseUrl    string
 	AppID           string
 	AppSecret       string
 	Token           string

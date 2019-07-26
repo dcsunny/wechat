@@ -4,22 +4,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"path"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
-var (
+const (
 	qyRedirectOauthURL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&agentid=%s&state=%s#wechat_redirect"
-	qyUserInfoURL      = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserinfo?access_token=%s&code=%s"
-	qyUserDetailURL    = "https://qyapi.weixin.qq.com/cgi-bin/user/getuserdetail"
+	qyUserInfoURL      = "/cgi-bin/user/getuserinfo?access_token=%s&code=%s"
+	qyUserDetailURL    = "/cgi-bin/user/getuserdetail"
 )
 
 //GetQyRedirectURL 获取企业微信跳转的url地址
 func (oauth *Oauth) GetQyRedirectURL(redirectURI, agentid, scope, state string) (string, error) {
 	//url encode
 	urlStr := url.QueryEscape(redirectURI)
-	return fmt.Sprintf(qyRedirectOauthURL, oauth.AppID, urlStr, scope, agentid, state), nil
+	return fmt.Sprintf(path.Join(oauth.ApiBaseUrl, checkAccessTokenURL), oauth.AppID, urlStr, scope, agentid, state), nil
 }
 
 //QyUserInfo 用户授权获取到用户信息
@@ -39,7 +40,7 @@ func (oauth *Oauth) GetQyUserInfoByCode(code string) (result QyUserInfo, err err
 		err = e
 		return
 	}
-	urlStr := fmt.Sprintf(qyUserInfoURL, qyAccessToken, code)
+	urlStr := fmt.Sprintf(path.Join(oauth.QyApiBaseUrl, qyUserInfoURL), qyAccessToken, code)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {
@@ -76,7 +77,7 @@ func (oauth *Oauth) GetQyUserDetailUserTicket(userTicket string) (result QyUserD
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s", qyUserDetailURL, qyAccessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", path.Join(oauth.QyApiBaseUrl, qyUserDetailURL), qyAccessToken)
 	var response []byte
 	response, err = util.PostJSON(uri, map[string]string{
 		"user_ticket": userTicket,

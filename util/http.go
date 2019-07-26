@@ -4,16 +4,15 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
-		"encoding/xml"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"io/ioutil"
-		"mime/multipart"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
-
-	)
+)
 
 //HTTPGet get 请求
 func HTTPGet(uri string) ([]byte, error) {

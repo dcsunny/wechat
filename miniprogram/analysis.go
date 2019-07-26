@@ -3,32 +3,33 @@ package miniprogram
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
-	"github.com/dcsunny/wechat/util"
 	"github.com/dcsunny/wechat/define"
+	"github.com/dcsunny/wechat/util"
 )
 
 const (
 	// 获取用户访问小程序日留存
-	getAnalysisDailyRetainURL = "https://api.weixin.qq.com/datacube/getweanalysisappiddailyretaininfo?access_token=%s"
+	getAnalysisDailyRetainURL = "/datacube/getweanalysisappiddailyretaininfo?access_token=%s"
 	// 获取用户访问小程序月留存
-	getAnalysisMonthlyRetainURL = "https://api.weixin.qq.com/datacube/getweanalysisappidmonthlyretaininfo?access_token=%s"
+	getAnalysisMonthlyRetainURL = "/datacube/getweanalysisappidmonthlyretaininfo?access_token=%s"
 	// 获取用户访问小程序周留存
-	getAnalysisWeeklyRetainURL = "https://api.weixin.qq.com/datacube/getweanalysisappidweeklyretaininfo?access_token=%s"
+	getAnalysisWeeklyRetainURL = "/datacube/getweanalysisappidweeklyretaininfo?access_token=%s"
 	// 获取用户访问小程序数据概况
-	getAnalysisDailySummaryURL = "https://api.weixin.qq.com/datacube/getweanalysisappiddailysummarytrend?access_token=%s"
+	getAnalysisDailySummaryURL = "/datacube/getweanalysisappiddailysummarytrend?access_token=%s"
 	// 获取用户访问小程序数据日趋势
-	getAnalysisDailyVisitTrendURL = "https://api.weixin.qq.com/datacube/getweanalysisappiddailyvisittrend?access_token=%s"
+	getAnalysisDailyVisitTrendURL = "/datacube/getweanalysisappiddailyvisittrend?access_token=%s"
 	// 获取用户访问小程序数据月趋势
-	getAnalysisMonthlyVisitTrendURL = "https://api.weixin.qq.com/datacube/getweanalysisappidmonthlyvisittrend?access_token=%s"
+	getAnalysisMonthlyVisitTrendURL = "/datacube/getweanalysisappidmonthlyvisittrend?access_token=%s"
 	// 获取用户访问小程序数据周趋势
-	getAnalysisWeeklyVisitTrendURL = "https://api.weixin.qq.com/datacube/getweanalysisappidweeklyvisittrend?access_token=%s"
+	getAnalysisWeeklyVisitTrendURL = "/datacube/getweanalysisappidweeklyvisittrend?access_token=%s"
 	// 获取小程序新增或活跃用户的画像分布数据
-	getAnalysisUserPortraitURL = "https://api.weixin.qq.com/datacube/getweanalysisappiduserportrait?access_token=%s"
+	getAnalysisUserPortraitURL = "/datacube/getweanalysisappiduserportrait?access_token=%s"
 	// 获取用户小程序访问分布数据
-	getAnalysisVisitDistributionURL = "https://api.weixin.qq.com/datacube/getweanalysisappidvisitdistribution?access_token=%s"
+	getAnalysisVisitDistributionURL = "/datacube/getweanalysisappidvisitdistribution?access_token=%s"
 	// 访问页面
-	getAnalysisVisitPageURL = "https://api.weixin.qq.com/datacube/getweanalysisappidvisitpage?access_token=%s"
+	getAnalysisVisitPageURL = "/datacube/getweanalysisappidvisitpage?access_token=%s"
 )
 
 // fetchData 拉取统计数据
@@ -80,17 +81,17 @@ func (wxa *MiniProgram) getAnalysisRetain(urlStr string, beginDate, endDate stri
 
 // GetAnalysisDailyRetain 获取用户访问小程序日留存
 func (wxa *MiniProgram) GetAnalysisDailyRetain(beginDate, endDate string) (result ResAnalysisRetain, err error) {
-	return wxa.getAnalysisRetain(getAnalysisDailyRetainURL, beginDate, endDate)
+	return wxa.getAnalysisRetain(path.Join(wxa.ApiBaseUrl, getAnalysisDailyRetainURL), beginDate, endDate)
 }
 
 // GetAnalysisMonthlyRetain 获取用户访问小程序月留存
 func (wxa *MiniProgram) GetAnalysisMonthlyRetain(beginDate, endDate string) (result ResAnalysisRetain, err error) {
-	return wxa.getAnalysisRetain(getAnalysisMonthlyRetainURL, beginDate, endDate)
+	return wxa.getAnalysisRetain(path.Join(wxa.ApiBaseUrl, getAnalysisMonthlyRetainURL), beginDate, endDate)
 }
 
 // GetAnalysisWeeklyRetain 获取用户访问小程序周留存
 func (wxa *MiniProgram) GetAnalysisWeeklyRetain(beginDate, endDate string) (result ResAnalysisRetain, err error) {
-	return wxa.getAnalysisRetain(getAnalysisWeeklyRetainURL, beginDate, endDate)
+	return wxa.getAnalysisRetain(path.Join(wxa.ApiBaseUrl, getAnalysisWeeklyRetainURL), beginDate, endDate)
 }
 
 // ResAnalysisDailySummary 小程序访问数据概况
@@ -110,7 +111,7 @@ func (wxa *MiniProgram) GetAnalysisDailySummary(beginDate, endDate string) (resu
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(getAnalysisDailySummaryURL, body)
+	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisDailySummaryURL), body)
 	if err != nil {
 		return
 	}
@@ -164,17 +165,17 @@ func (wxa *MiniProgram) getAnalysisVisitTrend(urlStr string, beginDate, endDate 
 
 // GetAnalysisDailyVisitTrend 获取用户访问小程序数据日趋势
 func (wxa *MiniProgram) GetAnalysisDailyVisitTrend(beginDate, endDate string) (result ResAnalysisVisitTrend, err error) {
-	return wxa.getAnalysisVisitTrend(getAnalysisDailyVisitTrendURL, beginDate, endDate)
+	return wxa.getAnalysisVisitTrend(path.Join(wxa.ApiBaseUrl, getAnalysisDailyVisitTrendURL), beginDate, endDate)
 }
 
 // GetAnalysisMonthlyVisitTrend 获取用户访问小程序数据月趋势
 func (wxa *MiniProgram) GetAnalysisMonthlyVisitTrend(beginDate, endDate string) (result ResAnalysisVisitTrend, err error) {
-	return wxa.getAnalysisVisitTrend(getAnalysisMonthlyVisitTrendURL, beginDate, endDate)
+	return wxa.getAnalysisVisitTrend(path.Join(wxa.ApiBaseUrl, getAnalysisMonthlyVisitTrendURL), beginDate, endDate)
 }
 
 // GetAnalysisWeeklyVisitTrend 获取用户访问小程序数据周趋势
 func (wxa *MiniProgram) GetAnalysisWeeklyVisitTrend(beginDate, endDate string) (result ResAnalysisVisitTrend, err error) {
-	return wxa.getAnalysisVisitTrend(getAnalysisWeeklyVisitTrendURL, beginDate, endDate)
+	return wxa.getAnalysisVisitTrend(path.Join(wxa.ApiBaseUrl, getAnalysisWeeklyVisitTrendURL), beginDate, endDate)
 }
 
 // UserPortraitItem 用户画像项目
@@ -209,7 +210,7 @@ func (wxa *MiniProgram) GetAnalysisUserPortrait(beginDate, endDate string) (resu
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(getAnalysisUserPortraitURL, body)
+	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisUserPortraitURL), body)
 	if err != nil {
 		return
 	}
@@ -250,7 +251,7 @@ func (wxa *MiniProgram) GetAnalysisVisitDistribution(beginDate, endDate string) 
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(getAnalysisVisitDistributionURL, body)
+	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisVisitDistributionURL), body)
 	if err != nil {
 		return
 	}
@@ -290,7 +291,7 @@ func (wxa *MiniProgram) GetAnalysisVisitPage(beginDate, endDate string) (result 
 		"begin_date": beginDate,
 		"end_date":   endDate,
 	}
-	response, err := wxa.fetchData(getAnalysisVisitPageURL, body)
+	response, err := wxa.fetchData(path.Join(wxa.ApiBaseUrl, getAnalysisVisitPageURL), body)
 	if err != nil {
 		return
 	}

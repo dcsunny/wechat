@@ -3,13 +3,14 @@ package miniprogram
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
 )
 
 const (
-	code2SessionURL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
+	code2SessionURL = "/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
 )
 
 // ResCode2Session 登录凭证校验的返回结果
@@ -23,7 +24,7 @@ type ResCode2Session struct {
 
 // Code2Session 登录凭证校验
 func (wxa *MiniProgram) Code2Session(jsCode string) (result ResCode2Session, err error) {
-	urlStr := fmt.Sprintf(code2SessionURL, wxa.AppID, wxa.AppSecret, jsCode)
+	urlStr := fmt.Sprintf(path.Join(wxa.ApiBaseUrl, code2SessionURL), wxa.AppID, wxa.AppSecret, jsCode)
 	var response []byte
 	response, err = util.HTTPGet(urlStr)
 	if err != nil {

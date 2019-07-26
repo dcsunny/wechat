@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"path"
 	"sync"
 	"time"
 
@@ -13,7 +14,7 @@ import (
 
 const (
 	//qyAccessTokenURL 获取access_token的接口
-	qyAccessTokenURL = "https://qyapi.weixin.qq.com/cgi-bin/gettoken?corpid=%s&corpsecret=%s"
+	qyAccessTokenURL = "/cgi-bin/gettoken?corpid=%s&corpsecret=%s"
 )
 
 //ResQyAccessToken struct
@@ -55,7 +56,7 @@ func (ctx *Context) GetQyAccessToken() (accessToken string, err error) {
 //GetQyAccessTokenFromServer 强制从微信服务器获取token
 func (ctx *Context) GetQyAccessTokenFromServer() (resQyAccessToken ResQyAccessToken, err error) {
 	log.Printf("GetQyAccessTokenFromServer")
-	url := fmt.Sprintf(qyAccessTokenURL, ctx.AppID, ctx.AppSecret)
+	url := fmt.Sprintf(path.Join(ctx.QyApiBaseUrl, qyAccessTokenURL), ctx.AppID, ctx.AppSecret)
 	var body []byte
 	body, err = util.HTTPGet(url)
 	if err != nil {

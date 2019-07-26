@@ -3,6 +3,7 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -11,9 +12,9 @@ import (
 )
 
 const (
-	userInfoURL     = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN"
-	updateRemarkURL = "https://api.weixin.qq.com/cgi-bin/user/info/updateremark?access_token=%s"
-	userListURL     = "https://api.weixin.qq.com/cgi-bin/user/get"
+	userInfoURL     = "/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN"
+	updateRemarkURL = "/cgi-bin/user/info/updateremark?access_token=%s"
+	userListURL     = "/cgi-bin/user/get"
 )
 
 //User 用户管理
@@ -59,7 +60,7 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 		return
 	}
 
-	uri := fmt.Sprintf(userInfoURL, accessToken, openID)
+	uri := fmt.Sprintf(path.Join(user.ApiBaseUrl, userInfoURL), accessToken, openID)
 	var response []byte
 	response, err = util.HTTPGet(uri)
 	if err != nil {
@@ -95,7 +96,7 @@ func (user *User) ListUserOpenIDs(nexOpenID string) (users ListResult, err error
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s&next_openid=%s", userListURL, accessToken, nexOpenID)
+	uri := fmt.Sprintf("%s?access_token=%s&next_openid=%s", path.Join(user.ApiBaseUrl, userListURL), accessToken, nexOpenID)
 	var response []byte
 	response, err = util.HTTPGet(uri)
 	if err != nil {
@@ -140,7 +141,7 @@ func (user *User) UpdateRemark(openID, remark string) (err error) {
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf(updateRemarkURL, accessToken)
+	uri := fmt.Sprintf(path.Join(user.ApiBaseUrl, updateRemarkURL), accessToken)
 	var response []byte
 	response, err = util.PostJSON(uri, map[string]string{"openid": openID, "remark": remark})
 	if err != nil {

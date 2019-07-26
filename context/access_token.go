@@ -3,6 +3,7 @@ package context
 import (
 	"encoding/json"
 	"fmt"
+	"path"
 	"sync"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 
 const (
 	//AccessTokenURL 获取access_token的接口
-	AccessTokenURL = "https://api.weixin.qq.com/cgi-bin/token"
+	AccessTokenURL = "/cgi-bin/token"
 )
 
 //ResAccessToken struct
@@ -61,7 +62,7 @@ func (ctx *Context) GetAccessToken() (accessToken string, err error) {
 
 //GetAccessTokenFromServer 强制从微信服务器获取token
 func (ctx *Context) GetAccessTokenFromServer() (resAccessToken ResAccessToken, err error) {
-	accessTokenUrl := AccessTokenURL
+	accessTokenUrl := path.Join(ctx.ApiBaseUrl, AccessTokenURL)
 	if ctx.AccessTokenURL != "" {
 		accessTokenUrl = ctx.AccessTokenURL
 	}
