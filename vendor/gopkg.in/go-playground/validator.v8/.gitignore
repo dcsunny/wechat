@@ -22,8 +22,8 @@ _testmain.go
 *.exe
 *.test
 *.prof
-.DS_Store
-.vscode/
-.idea
-
-go.sum
+*.test
+*.out
+*.txt
+cover.html
+README.html
