@@ -12,7 +12,7 @@ import (
 const (
 	templateSendURL          = "/cgi-bin/message/template/send"
 	templateSubscribeSendURL = "/cgi-bin/message/template/subscribe"
-	templateMiniSendURL      = "/cgi-bin/message/wxopen/template/send"
+	templateMiniSendURL      = "/api/json/template/send"
 	templateMiniOrMpSendURL  = "/cgi-bin/message/wxopen/template/uniform_send"
 )
 
