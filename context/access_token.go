@@ -12,7 +12,7 @@ import (
 
 const (
 	//AccessTokenURL 获取access_token的接口
-	AccessTokenURL = "/cgi-bin/token"
+	AccessTokenURL = "/api/token"
 )
 
 //ResAccessToken struct
