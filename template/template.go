@@ -79,6 +79,7 @@ func (tpl *Template) Send(msg *Message) (msgID int64, err error) {
 	var result resTemplateSend
 	err = json.Unmarshal(response, &result)
 	if err != nil {
+		err = fmt.Errorf("template msg send err,result:%s", string(response))
 		return
 	}
 	if result.ErrCode != 0 {
