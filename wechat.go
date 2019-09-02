@@ -38,6 +38,8 @@ type Config struct {
 	AccessTokenURL  string
 	PayCertPEMBlock string
 	PayKeyPEMBlock  string
+	PayOpUserID     string
+	PayOpUserPwd    string
 	Cache           cache.Cache
 }
 
@@ -64,6 +66,8 @@ func copyConfigToContext(cfg *Config, context *context.Context) {
 	context.PayNotifyURL = cfg.PayNotifyURL
 	context.PayCertPEMBlock = cfg.PayCertPEMBlock
 	context.PayKeyPEMBlock = cfg.PayKeyPEMBlock
+	context.PayOpUserID = cfg.PayOpUserID
+	context.PayOpUserPwd = cfg.PayOpUserPwd
 	context.Cache = cfg.Cache
 	context.AccessTokenURL = cfg.AccessTokenURL
 	context.ApiBaseUrl = cfg.ApiBaseUrl

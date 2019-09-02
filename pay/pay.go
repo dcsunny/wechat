@@ -13,7 +13,7 @@ import (
 
 const (
 	payGateway  = "https://api.mch.weixin.qq.com/pay/unifiedorder"
-	mchTransUri = "https://api.mch.weixin.qq.com/mmpaymkttransfers/promotion/transfers"
+	mchTransUri = "https://api.qpay.qq.com/cgi-bin/epay/qpay_epay_b2c.cgi"
 	sendRedUri  = "https://api.mch.weixin.qq.com/mmpaymkttransfers/sendredpack"
 	refundUri   = "https://api.mch.weixin.qq.com/secapi/pay/refund"
 )
@@ -198,7 +198,7 @@ func (pcf *Pay) PrePayOrder(p *Params) (payOrder PreOrder, err error) {
 		return payOrder, err
 	}
 	request.Sign = sign
-	rawRet, err := util.PostXML(payGateway, request, nil)
+	rawRet, err := util.PostXML(payGateway, request, "payRequest", nil)
 	if err != nil {
 		return PreOrder{}, errors.New(err.Error())
 	}
@@ -271,31 +271,34 @@ func (pcf *Pay) Sign(variable interface{}, key string) (sign string, err error) 
 }
 
 type MchTransfersParams struct {
-	MchAppID       string `xml:"mch_appid"`
-	MchID          string `xml:"mchid"`
+	InputCharset   string `xml:"input_charset"`
+	MchID          string `xml:"mch_id"`
 	NonceStr       string `xml:"nonce_str"`
 	Sign           string `xml:"sign"`
-	PartnerTradeNo string `xml:"partner_trade_no"`
+	OutTradeNo     string `xml:"out_trade_no"`
+	TotalFee       int    `xml:"total_fee"`
+	Memo           string `xml:"memo"`
+	AppID          string `xml:"appid"`
 	OpenID         string `xml:"openid"`
-	CheckName      string `xml:"check_name"`   //NO_CHECK：不校验真实姓名 FORCE_CHECK：强校验真实姓名
-	ReUserName     string `xml:"re_user_name"` //收款用户真实姓名。 如果check_name设置为FORCE_CHECK，则必填用户真实姓名
-	Amount         int    `xml:"amount"`       //分
-	Desc           string `xml:"desc"`
+	OpUserID       string `xml:"op_user_id"`
+	OpUserPasswd   string `xml:"op_user_passwd"`
 	SpbillCreateIp string `xml:"spbill_create_ip"`
 }
 
 func (pcf *Pay) MchPay(p *Params) error {
 	nonceStr := util.RandomStr(32)
 	params := &MchTransfersParams{
-		MchAppID:       pcf.AppID,
-		MchID:          pcf.PayMchID,
-		PartnerTradeNo: p.OutTradeNo,
+		InputCharset:   "UTF-8",
+		AppID:          pcf.AppID,
 		OpenID:         p.OpenID,
+		MchID:          pcf.PayMchID,
+		OutTradeNo:     p.OutTradeNo,
 		NonceStr:       nonceStr,
-		CheckName:      "NO_CHECK",
-		Amount:         p.TotalFee,
-		Desc:           p.Body,
+		TotalFee:       p.TotalFee,
+		Memo:           p.Body,
 		SpbillCreateIp: p.CreateIP,
+		OpUserID:       pcf.PayOpUserID,
+		OpUserPasswd:   pcf.PayOpUserPwd,
 	}
 	sign, err := pcf.Sign(params, pcf.PayKey)
 	if err != nil {
@@ -307,7 +310,7 @@ func (pcf *Pay) MchPay(p *Params) error {
 	if err != nil {
 		return err
 	}
-	rawRet, err := util.PostXML(mchTransUri, params, client)
+	rawRet, err := util.PostXML(mchTransUri, params, "MchTransfersParams", client)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -389,7 +392,7 @@ func (pcf *Pay) SendRed(p *Params) error {
 	if err != nil {
 		return err
 	}
-	rawRet, err := util.PostXML(sendRedUri, params, client)
+	rawRet, err := util.PostXML(sendRedUri, params, "RedParams", client)
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -481,7 +484,7 @@ func (pcf *Pay) Refund(p *RefundParams) error {
 	if err != nil {
 		return err
 	}
-	rawRet, err := util.PostXML(refundUri, params, client)
+	rawRet, err := util.PostXML(refundUri, params, "WxRefundParams", client)
 	if err != nil {
 		fmt.Println(err)
 		return err

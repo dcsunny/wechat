@@ -20,6 +20,8 @@ type Context struct {
 	PayKey          string
 	PayCertPEMBlock string
 	PayKeyPEMBlock  string
+	PayOpUserID     string
+	PayOpUserPwd    string
 
 	AccessTokenURL string
 

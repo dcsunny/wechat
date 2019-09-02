@@ -279,7 +279,7 @@ func (srv *Server) MessageForwardSend(postUrl string, retryNum *int) {
 	client := &http.Client{
 		Timeout: timeout,
 	}
-	resp, err := util.PostXML(postUrl, srv.requestMsg, client)
+	resp, err := util.PostXML(postUrl, srv.requestMsg, "MixMessage", client)
 	if err != nil {
 		if strings.Contains(err.Error(), "request canceled (Client.Timeout exceeded while awaiting headers)") {
 			msg := &message.Reply{MsgType: message.MsgTypeText, MsgData: message.NewText("系统异常,请稍后再试")}

@@ -11,6 +11,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -151,12 +152,14 @@ func PostMultipartForm(fields []MultipartFormField, uri string) (respBody []byte
 }
 
 //PostXML perform a HTTP/POST request with XML body
-func PostXML(uri string, obj interface{}, client *http.Client) ([]byte, error) {
+func PostXML(uri string, obj interface{}, xmlHead string, client *http.Client) ([]byte, error) {
 	xmlData, err := xml.Marshal(obj)
 	if err != nil {
 		return nil, err
 	}
-	body := bytes.NewBuffer(xmlData)
+	_xmlData := string(xmlData)
+	_xmlData = strings.Replace(_xmlData, xmlHead, "xml", 2)
+	body := bytes.NewBuffer([]byte(_xmlData))
 	if client == nil {
 		client = http.DefaultClient
 	}
