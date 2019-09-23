@@ -3,6 +3,7 @@ package material
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
@@ -49,6 +50,31 @@ func (material *Material) MediaUpload(mediaType MediaType, filename string) (med
 	uri := fmt.Sprintf("%s?access_token=%s&type=%s", mediaUploadURL, accessToken, mediaType)
 	var response []byte
 	response, err = util.PostFile("media", filename, uri)
+	if err != nil {
+		return
+	}
+	err = json.Unmarshal(response, &media)
+	if err != nil {
+		return
+	}
+	if media.ErrCode != 0 {
+		err = fmt.Errorf("MediaUpload error : errcode=%v , errmsg=%v", media.ErrCode, media.ErrMsg)
+		return
+	}
+	return
+}
+
+//MediaUpload 临时素材上传
+func (material *Material) MediaUploadV2(mediaType MediaType, filename string, fileReader io.Reader) (media Media, err error) {
+	var accessToken string
+	accessToken, err = material.GetAccessToken()
+	if err != nil {
+		return
+	}
+
+	uri := fmt.Sprintf("%s?access_token=%s&type=%s", mediaUploadURL, accessToken, mediaType)
+	var response []byte
+	response, err = util.PostFileV2("media", filename, fileReader, uri)
 	if err != nil {
 		return
 	}

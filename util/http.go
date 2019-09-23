@@ -4,16 +4,15 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
-		"encoding/xml"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"io/ioutil"
-		"mime/multipart"
+	"mime/multipart"
 	"net/http"
 	"os"
 	"time"
-
-	)
+)
 
 //HTTPGet get 请求
 func HTTPGet(uri string) ([]byte, error) {
@@ -89,6 +88,41 @@ func PostFile(fieldname, filename, uri string) ([]byte, error) {
 		},
 	}
 	return PostMultipartForm(fields, uri)
+}
+
+func PostFileV2(fieldname, filename string, fileReader io.Reader, uri string) (respBody []byte, err error) {
+	field := MultipartFormField{
+		IsFile:    true,
+		Fieldname: fieldname,
+		Filename:  filename,
+	}
+
+	bodyBuf := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuf)
+
+	fileWriter, e := bodyWriter.CreateFormFile(field.Fieldname, field.Filename)
+	if e != nil {
+		err = fmt.Errorf("error writing to buffer , err=%v", e)
+		return
+	}
+	if _, err = io.Copy(fileWriter, fileReader); err != nil {
+		return
+	}
+
+	contentType := bodyWriter.FormDataContentType()
+	bodyWriter.Close()
+
+	resp, e := http.Post(uri, contentType, bodyBuf)
+	if e != nil {
+		err = e
+		return
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return nil, err
+	}
+	respBody, err = ioutil.ReadAll(resp.Body)
+	return
 }
 
 //MultipartFormField 保存文件或其他字段信息
