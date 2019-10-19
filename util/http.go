@@ -17,11 +17,15 @@ import (
 //HTTPGet get 请求
 func HTTPGet(uri string) ([]byte, error) {
 	response, err := http.Get(uri)
+	defer func() {
+		if response != nil {
+			response.Body.Close()
+		}
+	}()
 	if err != nil {
 		return nil, err
 	}
 
-	defer response.Body.Close()
 	if response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("http get error : uri=%v , statusCode=%v", uri, response.StatusCode)
 	}
@@ -41,10 +45,14 @@ func PostJSON(uri string, obj interface{}) ([]byte, error) {
 
 	body := bytes.NewBuffer(jsonData)
 	response, err := http.Post(uri, "application/json;charset=utf-8", body)
+	defer func() {
+		if response != nil {
+			response.Body.Close()
+		}
+	}()
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("http get error : uri=%v , statusCode=%v", uri, response.StatusCode)
@@ -65,10 +73,14 @@ func PostJSONWithRespContentType(uri string, obj interface{}) ([]byte, string, e
 
 	body := bytes.NewBuffer(jsonData)
 	response, err := http.Post(uri, "application/json;charset=utf-8", body)
+	defer func() {
+		if response != nil {
+			response.Body.Close()
+		}
+	}()
 	if err != nil {
 		return nil, "", err
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		return nil, "", fmt.Errorf("http get error : uri=%v , statusCode=%v", uri, response.StatusCode)
@@ -113,11 +125,15 @@ func PostFileV2(fieldname, filename string, fileReader io.Reader, uri string) (r
 	bodyWriter.Close()
 
 	resp, e := http.Post(uri, contentType, bodyBuf)
+	defer func() {
+		if resp != nil {
+			resp.Body.Close()
+		}
+	}()
 	if e != nil {
 		err = e
 		return
 	}
-	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
 		return nil, err
 	}
@@ -197,10 +213,14 @@ func PostXML(uri string, obj interface{}, client *http.Client) ([]byte, error) {
 	}
 	var response *http.Response
 	response, err = client.Post(uri, "application/xml;charset=utf-8", body)
+	defer func() {
+		if response != nil {
+			response.Body.Close()
+		}
+	}()
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
 
 	if response.StatusCode != http.StatusOK {
 		return nil, fmt.Errorf("http code error : uri=%v , statusCode=%v", uri, response.StatusCode)
