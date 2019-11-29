@@ -9,6 +9,8 @@ import (
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
 	"github.com/dcsunny/wechat/util"
+
+	error2 "github.com/dcsunny/wechat/error"
 )
 
 const (
@@ -75,6 +77,7 @@ func (q *QR) GetQRTicket(tq *Request) (t *Ticket, err error) {
 	if err != nil {
 		return
 	}
+	err = error2.CommonErrorHandle(t.CommonError, q.Context, "GetUserInfo")
 
 	return
 }

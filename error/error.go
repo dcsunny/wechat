@@ -16,15 +16,15 @@ func DecodeWithCommonError(context *context.Context, response []byte, apiName st
 		return
 	}
 	if commError.ErrCode != 0 {
-		CommonErrorHandle(commError, context)
-		return fmt.Errorf("%s Error , errcode=%d , errmsg=%s", apiName, commError.ErrCode, commError.ErrMsg)
+		return CommonErrorHandle(commError, context, apiName)
 	}
 	return nil
 }
 
-func CommonErrorHandle(commError define.CommonError, context *context.Context) {
+func CommonErrorHandle(commError define.CommonError, context *context.Context, apiName string) error {
 	if commError.ErrCode == 40001 {
 		accessTokenCacheKey := fmt.Sprintf(define.AccessTokenCacheKey, context.AppID)
 		context.Cache.Delete(accessTokenCacheKey)
 	}
+	return fmt.Errorf("%s Error , errcode=%d , errmsg=%s", apiName, commError.ErrCode, commError.ErrMsg)
 }
