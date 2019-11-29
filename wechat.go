@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/dcsunny/wechat/safe"
+
 	"github.com/dcsunny/wechat/cache"
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/custom"
@@ -127,4 +129,8 @@ func (wc *Wechat) GetTag() *user.Tag {
 //客服消息接口
 func (wc *Wechat) GetCustom() *custom.Custom {
 	return custom.NewCustom(wc.Context)
+}
+
+func (wc *Wechat) GetSafe() *safe.WxSafe {
+	return safe.NewWxSafe(wc.Context)
 }
