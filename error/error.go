@@ -22,6 +22,9 @@ func DecodeWithCommonError(context *context.Context, response []byte, apiName st
 }
 
 func CommonErrorHandle(commError define.CommonError, context *context.Context, apiName string) error {
+	if commError.ErrCode == 0 {
+		return nil
+	}
 	if commError.ErrCode == 40001 {
 		accessTokenCacheKey := fmt.Sprintf(define.AccessTokenCacheKey, context.AppID)
 		context.Cache.Delete(accessTokenCacheKey)
