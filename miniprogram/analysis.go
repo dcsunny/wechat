@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/dcsunny/wechat/util"
 	"github.com/dcsunny/wechat/define"
+	"github.com/dcsunny/wechat/util"
 )
 
 const (

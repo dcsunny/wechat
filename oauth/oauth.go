@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	error2 "github.com/dcsunny/wechat/error"
+	"github.com/dcsunny/wechat/common_error"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
@@ -84,7 +84,7 @@ func (oauth *Oauth) GetUserAccessToken(code string) (result ResAccessToken, err 
 	if err != nil {
 		return
 	}
-	err = error2.CommonErrorHandle(result.CommonError, oauth.Context, "GetUserAccessToken")
+	err = common_error.CommonErrorHandle(result.CommonError, oauth.Context, "GetUserAccessToken")
 	return
 }
 
@@ -155,6 +155,6 @@ func (oauth *Oauth) GetUserInfo(accessToken, openID string) (result UserInfo, er
 	if err != nil {
 		return
 	}
-	err = error2.CommonErrorHandle(result.CommonError, oauth.Context, "GetUserInfo")
+	err = common_error.CommonErrorHandle(result.CommonError, oauth.Context, "GetUserInfo")
 	return
 }

@@ -32,6 +32,25 @@ func HTTPGet(uri string) ([]byte, error) {
 	return ioutil.ReadAll(response.Body)
 }
 
+//HTTPPost post 请求
+func HTTPPost(uri string, data string) ([]byte, error) {
+	body := bytes.NewBuffer([]byte(data))
+	response, err := http.Post(uri, "", body)
+	defer func() {
+		if response != nil {
+			response.Body.Close()
+		}
+	}()
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("http get error : uri=%v , statusCode=%v", uri, response.StatusCode)
+	}
+	return ioutil.ReadAll(response.Body)
+}
+
 //PostJSON post json 数据请求
 func PostJSON(uri string, obj interface{}) ([]byte, error) {
 	jsonData, err := json.Marshal(obj)

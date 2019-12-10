@@ -3,10 +3,12 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"net/url"
+
+	"github.com/dcsunny/wechat/common_error"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
-	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -51,8 +53,18 @@ type Info struct {
 	QrSceneStr     string  `json:"qr_scene_str"`
 }
 
+// OpenidList 用户列表
+type OpenidList struct {
+	Total int `json:"total"`
+	Count int `json:"count"`
+	Data  struct {
+		OpenIDs []string `json:"openid"`
+	} `json:"data"`
+	NextOpenID string `json:"next_openid"`
+}
+
 //GetUserInfo 获取用户基本信息
-func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
+func (user *User) GetUserInfo(openID string) (userInfo *Info, err error) {
 	var accessToken string
 	accessToken, err = user.GetAccessToken()
 	if err != nil {
@@ -65,10 +77,9 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 	if err != nil {
 		return
 	}
-	userInfo = Info{}
-	err = json.Unmarshal(response, &userInfo)
+	userInfo = new(Info)
+	err = json.Unmarshal(response, userInfo)
 	if err != nil {
-		err = fmt.Errorf("get user info:%s", string(response))
 		return
 	}
 	if userInfo.ErrCode != 0 {
@@ -78,43 +89,54 @@ func (user *User) GetUserInfo(openID string) (userInfo Info, err error) {
 	return
 }
 
-type ListResult struct {
-	define.CommonError
-
-	Total int `json:"total"`
-	Count int `json:"count"`
-	Data  struct {
-		OpenIDs []string `json:"openid"`
-	} `json:"data"`
-	NextOpenID string `json:"next_openid"`
-}
-
-func (user *User) ListUserOpenIDs(nexOpenID string) (users ListResult, err error) {
+// UpdateRemark 设置用户备注名
+func (user *User) UpdateRemark(openID, remark string) (err error) {
 	var accessToken string
 	accessToken, err = user.GetAccessToken()
 	if err != nil {
 		return
 	}
-	uri := fmt.Sprintf("%s?access_token=%s&next_openid=%s", userListURL, accessToken, nexOpenID)
+
+	uri := fmt.Sprintf(updateRemarkURL, accessToken)
 	var response []byte
-	response, err = util.HTTPGet(uri)
+	response, err = util.PostJSON(uri, map[string]string{"openid": openID, "remark": remark})
 	if err != nil {
 		return
 	}
 
-	users = ListResult{}
-	err = json.Unmarshal(response, &users)
-	if err != nil {
-		err = fmt.Errorf("get user info:%s", string(response))
-		return
-	}
-	if users.ErrCode != 0 {
-		err = fmt.Errorf("get user list Error , errcode=%d , errmsg=%s", users.ErrCode, users.ErrMsg)
-		return
-	}
-	return
+	return common_error.DecodeWithCommonError(user.Context, response, "UpdateRemark")
 }
 
+// ListUserOpenIDs 返回用户列表
+func (user *User) ListUserOpenIDs(nextOpenid ...string) (*OpenidList, error) {
+	accessToken, err := user.GetAccessToken()
+	if err != nil {
+		return nil, err
+	}
+
+	uri, _ := url.Parse(userListURL)
+	q := uri.Query()
+	q.Set("access_token", accessToken)
+	if len(nextOpenid) > 0 && nextOpenid[0] != "" {
+		q.Set("next_openid", nextOpenid[0])
+	}
+	uri.RawQuery = q.Encode()
+
+	response, err := util.HTTPGet(uri.String())
+	if err != nil {
+		return nil, err
+	}
+
+	userlist := new(OpenidList)
+	err = json.Unmarshal(response, userlist)
+	if err != nil {
+		return nil, err
+	}
+
+	return userlist, nil
+}
+
+// ListAllUserOpenIDs 返回所有用户OpenID列表
 func (user *User) ListAllUserOpenIDs() ([]string, error) {
 	nextOpenid := ""
 	openids := []string{}
@@ -132,19 +154,4 @@ func (user *User) ListAllUserOpenIDs() ([]string, error) {
 			return openids, nil
 		}
 	}
-}
-
-func (user *User) UpdateRemark(openID, remark string) (err error) {
-	var accessToken string
-	accessToken, err = user.GetAccessToken()
-	if err != nil {
-		return
-	}
-	uri := fmt.Sprintf(updateRemarkURL, accessToken)
-	var response []byte
-	response, err = util.PostJSON(uri, map[string]string{"openid": openID, "remark": remark})
-	if err != nil {
-		return
-	}
-	return error2.DecodeWithCommonError(user.Context, response, "UpdateRemark")
 }

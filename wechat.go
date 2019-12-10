@@ -4,11 +4,12 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/dcsunny/wechat/message"
+
 	"github.com/dcsunny/wechat/safe"
 
 	"github.com/dcsunny/wechat/cache"
 	"github.com/dcsunny/wechat/context"
-	"github.com/dcsunny/wechat/custom"
 	"github.com/dcsunny/wechat/js"
 	"github.com/dcsunny/wechat/material"
 	"github.com/dcsunny/wechat/menu"
@@ -17,7 +18,6 @@ import (
 	"github.com/dcsunny/wechat/pay"
 	"github.com/dcsunny/wechat/qr"
 	"github.com/dcsunny/wechat/server"
-	"github.com/dcsunny/wechat/template"
 	"github.com/dcsunny/wechat/user"
 )
 
@@ -102,8 +102,8 @@ func (wc *Wechat) GetUser() *user.User {
 }
 
 // GetTemplate 模板消息接口
-func (wc *Wechat) GetTemplate() *template.Template {
-	return template.NewTemplate(wc.Context)
+func (wc *Wechat) GetTemplate() *message.Template {
+	return message.NewTemplate(wc.Context)
 }
 
 // GetPay 返回支付消息的实例
@@ -127,8 +127,8 @@ func (wc *Wechat) GetTag() *user.Tag {
 }
 
 //客服消息接口
-func (wc *Wechat) GetCustom() *custom.Custom {
-	return custom.NewCustom(wc.Context)
+func (wc *Wechat) GetCustom() *message.Manager {
+	return message.NewMessageManager(wc.Context)
 }
 
 func (wc *Wechat) GetSafe() *safe.WxSafe {

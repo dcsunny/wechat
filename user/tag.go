@@ -3,11 +3,12 @@ package user
 import (
 	"fmt"
 
+	"github.com/dcsunny/wechat/common_error"
+
 	"encoding/json"
 
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
-	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -72,5 +73,5 @@ func (tag *Tag) UpdateUserTag(openIDs []string, tagID int) (err error) {
 		return
 	}
 	fmt.Println(string(response))
-	return error2.DecodeWithCommonError(tag.Context, response, "UpdateUserTag")
+	return common_error.DecodeWithCommonError(tag.Context, response, "UpdateUserTag")
 }

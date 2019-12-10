@@ -67,9 +67,6 @@ func (srv *Server) Serve() error {
 		return err
 	}
 
-	//debug
-	//fmt.Println("request msg = ", string(srv.requestRawXMLMsg))
-
 	return srv.buildResponse(response)
 }
 

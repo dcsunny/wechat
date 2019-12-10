@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dcsunny/wechat/common_error"
+
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
-	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -136,7 +137,7 @@ func (menu *Menu) SetMenu(buttons []*Button) error {
 	if err != nil {
 		return err
 	}
-	return error2.DecodeWithCommonError(menu.Context, response, "SetMenu")
+	return common_error.DecodeWithCommonError(menu.Context, response, "SetMenu")
 }
 
 //GetMenu 获取菜单配置
@@ -174,7 +175,7 @@ func (menu *Menu) DeleteMenu() error {
 	if err != nil {
 		return err
 	}
-	return error2.DecodeWithCommonError(menu.Context, response, "DeleteMenu")
+	return common_error.DecodeWithCommonError(menu.Context, response, "DeleteMenu")
 }
 
 //AddConditional 添加个性化菜单
@@ -194,7 +195,7 @@ func (menu *Menu) AddConditional(buttons []*Button, matchRule *MatchRule) error 
 	if err != nil {
 		return err
 	}
-	return error2.DecodeWithCommonError(menu.Context, response, "AddConditional")
+	return common_error.DecodeWithCommonError(menu.Context, response, "AddConditional")
 }
 
 //DeleteConditional 删除个性化菜单
@@ -213,7 +214,7 @@ func (menu *Menu) DeleteConditional(menuID int64) error {
 	if err != nil {
 		return err
 	}
-	return error2.DecodeWithCommonError(menu.Context, response, "DeleteConditional")
+	return common_error.DecodeWithCommonError(menu.Context, response, "DeleteConditional")
 }
 
 //MenuTryMatch 菜单匹配

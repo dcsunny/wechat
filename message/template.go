@@ -1,12 +1,13 @@
-package template
+package message
 
 import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dcsunny/wechat/common_error"
+
 	"github.com/dcsunny/wechat/context"
 	"github.com/dcsunny/wechat/define"
-	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -84,7 +85,7 @@ func (tpl *Template) Send(msg *Message) (msgID int64, err error) {
 		return
 	}
 	if result.ErrCode != 0 {
-		err = error2.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateSend")
+		err = common_error.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateSend")
 		return
 	}
 	msgID = result.MsgID
@@ -107,7 +108,7 @@ func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
 		return
 	}
 	if result.ErrCode != 0 {
-		err = error2.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateMiniSend")
+		err = common_error.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateMiniSend")
 		return
 	}
 	templateID = result.TemplateID
@@ -155,7 +156,7 @@ func (tpl *Template) SendMiniOrMp(msg *MiniMpMessage) (err error) {
 		return
 	}
 	if result.ErrCode != 0 {
-		err = error2.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateSendMiniOrMp")
+		err = common_error.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateSendMiniOrMp")
 		return
 	}
 	return
@@ -181,7 +182,7 @@ func (tpl *Template) SendSubscribeMessage(msg *SubscribeMessage) (err error) {
 		return
 	}
 	if result.ErrCode != 0 {
-		err = error2.CommonErrorHandle(result, tpl.Context, "TemplateSendSubscribeMessage")
+		err = common_error.CommonErrorHandle(result, tpl.Context, "TemplateSendSubscribeMessage")
 		return
 	}
 	return

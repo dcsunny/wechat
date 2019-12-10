@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	"github.com/dcsunny/wechat/common_error"
+
 	"github.com/dcsunny/wechat/define"
 
 	"github.com/dcsunny/wechat/context"
-	error2 "github.com/dcsunny/wechat/error"
 	"github.com/dcsunny/wechat/util"
 )
 
@@ -46,6 +47,6 @@ func (s *WxSafe) GetWxIp() (result IpListResult, err error) {
 	if err != nil {
 		return
 	}
-	err = error2.CommonErrorHandle(result.CommonError, s.Context, "getWxIp")
+	err = common_error.CommonErrorHandle(result.CommonError, s.Context, "getWxIp")
 	return result, err
 }
