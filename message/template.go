@@ -12,10 +12,11 @@ import (
 )
 
 const (
-	templateSendURL          = "https://api.weixin.qq.com/cgi-bin/message/template/send"
-	templateSubscribeSendURL = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"
-	templateMiniSendURL      = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"
-	templateMiniOrMpSendURL  = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send"
+	templateSendURL              = "https://api.weixin.qq.com/cgi-bin/message/template/send"                //公众号模板消息
+	templateSubscribeSendURL     = "https://api.weixin.qq.com/cgi-bin/message/template/subscribe"           //公众号一次性订阅消息
+	templateMiniSendURL          = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send"         //微信小程序模板消息发送
+	templateMiniOrMpSendURL      = "https://api.weixin.qq.com/cgi-bin/message/wxopen/template/uniform_send" //下发小程序和公众号统一的服务消息
+	templateMiniSubscribeSendURL = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send"               //微信小程序一次性订阅消息
 )
 
 //Template 模板消息
@@ -54,8 +55,8 @@ type MiniMessage struct {
 
 //DataItem 模版内某个 .DATA 的值
 type DataItem struct {
-	Value string `json:"value"`
-	Color string `json:"color,omitempty"`
+	Value interface{} `json:"value"`
+	Color string      `json:"color,omitempty"`
 }
 
 type resTemplateSend struct {
@@ -183,6 +184,33 @@ func (tpl *Template) SendSubscribeMessage(msg *SubscribeMessage) (err error) {
 	}
 	if result.ErrCode != 0 {
 		err = common_error.CommonErrorHandle(result, tpl.Context, "TemplateSendSubscribeMessage")
+		return
+	}
+	return
+}
+
+type MiniSubscribeMessage struct {
+	ToUser     string               `json:"touser"`      // 必须, 接受者OpenID
+	TemplateID string               `json:"template_id"` // 必须, 模版ID
+	Data       map[string]*DataItem `json:"data"`        // 必须, 模板数据
+	Page       string               `json:"page"`
+}
+
+func (tpl *Template) SendMiniSubscribeMessage(msg *MiniSubscribeMessage) (err error) {
+	var accessToken string
+	accessToken, err = tpl.GetAccessToken()
+	if err != nil {
+		return
+	}
+	uri := fmt.Sprintf("%s?access_token=%s", templateMiniSubscribeSendURL, accessToken)
+	response, err := util.PostJSON(uri, msg)
+	var result define.CommonError
+	err = json.Unmarshal(response, &result)
+	if err != nil {
+		return
+	}
+	if result.ErrCode != 0 {
+		err = common_error.CommonErrorHandle(result, tpl.Context, "TemplateMiniSendSubscribeMessage")
 		return
 	}
 	return
