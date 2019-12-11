@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	getWxIpURL = "https://api.weixin.qq.com/cgi-bin/getcallbackip?access_token=%s"
+	getWxIpURL = "https://api.weixin.qq.com/cgi-bin/getcallbackip"
 )
 
 type WxSafe struct {
