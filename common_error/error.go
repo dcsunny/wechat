@@ -55,7 +55,6 @@ func CommonErrorHandle(commError define.CommonError, context *context.Context, a
 	if commError.ErrCode == 40001 {
 		accessTokenCacheKey := fmt.Sprintf(define.AccessTokenCacheKey, context.AppID)
 		context.Cache.Delete(accessTokenCacheKey)
-		fmt.Println(fmt.Errorf("%s Error , errcode=%d , errmsg=%s", apiName, commError.ErrCode, commError.ErrMsg))
 	}
 	return fmt.Errorf("%s Error , errcode=%d , errmsg=%s", apiName, commError.ErrCode, commError.ErrMsg)
 }
