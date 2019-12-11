@@ -199,6 +199,10 @@ func (c CDATA) MarshalXML(e *xml.Encoder, start xml.StartElement) error {
 	}{string(c)}, start)
 }
 
+func (c CDATA) String() string {
+	return string(c)
+}
+
 // CommonToken 消息中通用的结构
 type CommonToken struct {
 	XMLName      xml.Name `xml:"xml"`
