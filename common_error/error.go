@@ -10,21 +10,15 @@ import (
 	"github.com/dcsunny/wechat/define"
 )
 
-// CommonError 微信返回的通用错误json
-type CommonError struct {
-	ErrCode int64  `json:"errcode"`
-	ErrMsg  string `json:"errmsg"`
-}
-
 // DecodeWithCommonError 将返回值按照CommonError解析
 func DecodeWithCommonError(context *context.Context, response []byte, apiName string) (err error) {
-	var commError CommonError
+	var commError define.CommonError
 	err = json.Unmarshal(response, &commError)
 	if err != nil {
 		return
 	}
 	if commError.ErrCode != 0 {
-		return fmt.Errorf("%s Error , errcode=%d , errmsg=%s", apiName, commError.ErrCode, commError.ErrMsg)
+		return CommonErrorHandle(commError, context, apiName)
 	}
 	return nil
 }
@@ -61,6 +55,7 @@ func CommonErrorHandle(commError define.CommonError, context *context.Context, a
 	if commError.ErrCode == 40001 {
 		accessTokenCacheKey := fmt.Sprintf(define.AccessTokenCacheKey, context.AppID)
 		context.Cache.Delete(accessTokenCacheKey)
+		fmt.Println(fmt.Errorf("%s Error , errcode=%d , errmsg=%s", apiName, commError.ErrCode, commError.ErrMsg))
 	}
 	return fmt.Errorf("%s Error , errcode=%d , errmsg=%s", apiName, commError.ErrCode, commError.ErrMsg)
 }
