@@ -44,14 +44,14 @@ type Message struct {
 	} `json:"miniprogram"` //可选,跳转至小程序地址
 }
 
-type MiniMessage struct {
-	ToUser          string               `json:"touser"`      // 必须, 接受者OpenID
-	TemplateID      string               `json:"template_id"` // 必须, 模版ID
-	Data            map[string]*DataItem `json:"data"`        // 必须, 模板数据
-	Page            string               `json:"page"`
-	FormID          string               `json:"form_id"`
-	EmphasisKeyword string               `json:"emphasis_keyword"`
-}
+//type MiniMessage struct {
+//	ToUser          string               `json:"touser"`      // 必须, 接受者OpenID
+//	TemplateID      string               `json:"template_id"` // 必须, 模版ID
+//	Data            map[string]*DataItem `json:"data"`        // 必须, 模板数据
+//	Page            string               `json:"page"`
+//	FormID          string               `json:"form_id"`
+//	EmphasisKeyword string               `json:"emphasis_keyword"`
+//}
 
 //DataItem 模版内某个 .DATA 的值
 type DataItem struct {
@@ -93,28 +93,29 @@ func (tpl *Template) Send(msg *Message) (msgID int64, err error) {
 	return
 }
 
-func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
-	var accessToken string
-	accessToken, err = tpl.GetAccessToken()
-	if err != nil {
-		return
-	}
-	uri := fmt.Sprintf("%s?access_token=%s", templateMiniSendURL, accessToken)
-	response, err := util.PostJSON(uri, msg)
-
-	var result resTemplateMiniSend
-	err = json.Unmarshal(response, &result)
-	if err != nil {
-		err = fmt.Errorf("body:%s", string(response))
-		return
-	}
-	if result.ErrCode != 0 {
-		err = common_error.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateMiniSend")
-		return
-	}
-	templateID = result.TemplateID
-	return
-}
+//todo 已废弃
+//func (tpl *Template) MiniSend(msg *MiniMessage) (templateID string, err error) {
+//	var accessToken string
+//	accessToken, err = tpl.GetAccessToken()
+//	if err != nil {
+//		return
+//	}
+//	uri := fmt.Sprintf("%s?access_token=%s", templateMiniSendURL, accessToken)
+//	response, err := util.PostJSON(uri, msg)
+//
+//	var result resTemplateMiniSend
+//	err = json.Unmarshal(response, &result)
+//	if err != nil {
+//		err = fmt.Errorf("body:%s", string(response))
+//		return
+//	}
+//	if result.ErrCode != 0 {
+//		err = common_error.CommonErrorHandle(result.CommonError, tpl.Context, "TemplateMiniSend")
+//		return
+//	}
+//	templateID = result.TemplateID
+//	return
+//}
 
 type MiniMpMessage struct {
 	ToUser           string           `json:"touser"`
