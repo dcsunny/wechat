@@ -190,10 +190,12 @@ func (tpl *Template) SendSubscribeMessage(msg *SubscribeMessage) (err error) {
 }
 
 type MiniSubscribeMessage struct {
-	ToUser     string               `json:"touser"`      // 必须, 接受者OpenID
-	TemplateID string               `json:"template_id"` // 必须, 模版ID
-	Data       map[string]*DataItem `json:"data"`        // 必须, 模板数据
-	Page       string               `json:"page"`
+	ToUser           string               `json:"touser"`      // 必须, 接受者OpenID
+	TemplateID       string               `json:"template_id"` // 必须, 模版ID
+	Data             map[string]*DataItem `json:"data"`        // 必须, 模板数据
+	Page             string               `json:"page"`
+	MiniprogramState string               `json:"miniprogram_state"` //跳转小程序类型：developer为开发版；trial为体验版；formal为正式版；默认为正式版
+	Lang             string               `json:"lang"`              //进入小程序查看”的语言类型，支持zh_CN(简体中文)、en_US(英文)、zh_HK(繁体中文)、zh_TW(繁体中文)，默认为zh_CN
 }
 
 func (tpl *Template) SendMiniSubscribeMessage(msg *MiniSubscribeMessage) (err error) {
