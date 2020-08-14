@@ -191,6 +191,7 @@ func (pcf *Pay) PrePayOrder(p *Params) (payOrder PreOrder, err error) {
 		NotifyUrl:      pcf.PayNotifyURL,
 		TradeType:      p.TradeType,
 		OpenID:         p.OpenID,
+		Attach:         p.Remark,
 	}
 	sign, err := pcf.Sign(&request, pcf.PayKey)
 	if err != nil {
