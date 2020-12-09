@@ -75,6 +75,19 @@ func NewCustomerVoiceMessage(toUser, mediaID string) *CustomerMessage {
 	}
 }
 
+func NewCustomMiniprogrampageMessage(toUser string, title string, appID string, pagePath string, thumbMediaID string) *CustomerMessage {
+	return &CustomerMessage{
+		ToUser:  toUser,
+		Msgtype: MsgTypeMiniprogrampage,
+		Miniprogrampage: &MediaMiniprogrampage{
+			Title:        title,
+			Appid:        appID,
+			Pagepath:     pagePath,
+			ThumbMediaID: thumbMediaID,
+		},
+	}
+}
+
 //MediaText 文本消息的文字
 type MediaText struct {
 	Content string `json:"content"`
