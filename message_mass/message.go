@@ -30,6 +30,9 @@ type MessageByOpen struct {
 	Text    struct {
 		Content string `json:"content"`
 	} `json:"text"`
+	Mpnews struct {
+		MediaID string `json:"media_id"`
+	} `json:"mpnews"`
 	Clientmsgid string `json:"clientmsgid"`
 }
 
@@ -42,6 +45,9 @@ type MessageByTag struct {
 	Text    struct {
 		Content string `json:"content"`
 	} `json:"text"`
+	Mpnews struct {
+		MediaID string `json:"media_id"`
+	} `json:"mpnews"`
 	Clientmsgid string `json:"clientmsgid"`
 }
 
