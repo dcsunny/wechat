@@ -34,6 +34,8 @@ const (
 	MsgTypeMusic = "music"
 	//MsgTypeNews 表示图文消息[限回复]
 	MsgTypeNews = "news"
+	//MsgTypeNews 表示图文消息[限群发消息]
+	MsgTypeMPNews = "mpnews"
 	//MsgTypeTransfer 表示消息消息转发到客服
 	MsgTypeTransfer = "transfer_customer_service"
 	//MsgTypeEvent 表示事件推送消息

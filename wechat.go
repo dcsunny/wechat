@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/dcsunny/wechat/message_mass"
+
 	"github.com/dcsunny/wechat/message"
 
 	"github.com/dcsunny/wechat/safe"
@@ -104,6 +106,11 @@ func (wc *Wechat) GetUser() *user.User {
 // GetTemplate 模板消息接口
 func (wc *Wechat) GetTemplate() *message.Template {
 	return message.NewTemplate(wc.Context)
+}
+
+// GetMessageMass 群发消息接口
+func (wc *Wechat) GetMessageMass() *message_mass.MessageMass {
+	return message_mass.NewMessageMass(wc.Context)
 }
 
 // GetPay 返回支付消息的实例
