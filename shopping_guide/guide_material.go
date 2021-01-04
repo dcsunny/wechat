@@ -221,7 +221,7 @@ func (g *GuideMaterial) GetGuideWordMaterial(_type int, start, num int) (*GetGui
 		return nil, err
 	}
 
-	uri := fmt.Sprintf("%s?access_token=%s", getGuideImageMaterial, accessToken)
+	uri := fmt.Sprintf("%s?access_token=%s", getGuideWordMaterial, accessToken)
 	response, err := util.PostJSON(uri, map[string]interface{}{
 		"type":  _type,
 		"start": start,
@@ -236,7 +236,7 @@ func (g *GuideMaterial) GetGuideWordMaterial(_type int, start, num int) (*GetGui
 		return nil, err
 	}
 	if result.ErrCode != 0 {
-		return nil, common_error.CommonErrorHandle(result.CommonError, g.Context, "getGuideImageMaterial")
+		return nil, common_error.CommonErrorHandle(result.CommonError, g.Context, "getGuideWordMaterial")
 	}
 	return &result, nil
 }
