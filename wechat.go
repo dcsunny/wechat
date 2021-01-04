@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/dcsunny/wechat/shopping_guide"
+
 	"github.com/dcsunny/wechat/message_mass"
 
 	"github.com/dcsunny/wechat/message"
@@ -140,4 +142,9 @@ func (wc *Wechat) GetCustom() *message.Manager {
 
 func (wc *Wechat) GetSafe() *safe.WxSafe {
 	return safe.NewWxSafe(wc.Context)
+}
+
+//对话能力接口
+func (wc *Wechat) GetGuide() *shopping_guide.Guide {
+	return shopping_guide.NewGuide(wc.Context)
 }
