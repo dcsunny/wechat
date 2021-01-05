@@ -125,8 +125,8 @@ func (wc *Wechat) GetQrCode() *qr.QR {
 	return qr.NewQR(wc.Context)
 }
 
-//小程序二维码
-func (wc *Wechat) GetMiniQrCode() *miniprogram.MiniProgram {
+//小程序接口
+func (wc *Wechat) GetMiniProgram() *miniprogram.MiniProgram {
 	return miniprogram.NewMiniProgram(wc.Context)
 }
 
