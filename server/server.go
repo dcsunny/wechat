@@ -226,9 +226,6 @@ func (srv *Server) Send() (err error) {
 	if replyMsg != nil {
 		srv.XML(replyMsg)
 	} else {
-		if srv.requestMsg.Event == message.EventView {
-			return
-		}
 		if srv.responseNeedForward {
 			if srv.mssageForwardUrl != "" {
 				srv.MessageForward()
