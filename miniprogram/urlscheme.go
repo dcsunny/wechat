@@ -15,7 +15,7 @@ const (
 )
 
 type UrlschemeGenerateReq struct {
-	JumpWxa    UrlschemeGenerateJumWxa `json:"jumpWxa"`
+	JumpWxa    UrlschemeGenerateJumWxa `json:"jump_wxa"`
 	IsExpire   bool                    `json:"is_expire"`
 	ExpireTime int64                   `json:"expire_time"`
 }
